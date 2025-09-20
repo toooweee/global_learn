@@ -47,8 +47,8 @@ model User {
   token            Token[]
   company          Company?     @relation(fields: [companyId], references: [id])
   companyId        String?      @map("company_id")
-  position         Position     @relation(fields: [positionId], references: [id])
-  positionId       String       @map("position_id")
+  position         Position?    @relation(fields: [positionId], references: [id])
+  positionId       String?      @map("position_id")
   extraPermissions Permission[]
 
   createdAt DateTime @default(now()) @map("created_at")
