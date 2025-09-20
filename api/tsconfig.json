@@ -16,6 +16,20 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strictBindCallApply": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@prisma": ["src/prisma"],
+      "@prisma/*": ["src/prisma/*"],
+      "@users": ["src/users"],
+      "@users/*": ["src/users/*"],
+      "@auth": ["src/auth"],
+      "@auth/*": ["src/auth/*"],
+      "@tokens": ["src/tokens"],
+      "@tokens/*": ["src/tokens/*"],
+      "@mail": ["src/mail"],
+      "@mail/*": ["src/mail/*"],
+      "@providers": ["src/providers"],
+      "@providers/*": ["src/providers/*"]
+    }
   }
 }
