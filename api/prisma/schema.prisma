@@ -1,15 +1,150 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+
+  @@map("roles")
+}
+
+enum Permission {
+  CREATE_COURSE
+  READ_COURSE
+  REQUEST_COURSE_ACCESS
+  UPDATE_COURSE
+  DELETE_COURSE
+
+  CREATE_DEPARTMENT
+  DELETE_DEPARTMENT
+  UPDATE_DEPARTMENT
+  READ_DEPARTMENT
+
+  CREATE_POSITION
+  DELETE_POSITION
+  UPDATE_POSITION
+  READ_POSITION
+
+  CREATE_EMPLOYEE
+  DELETE_EMPLOYEE
+  UPDATE_EMPLOYEE
+  READ_EMPLOYEE
+
+  @@map("permissions")
+}
+
+model User {
+  id               String       @id @default(uuid())
+  email            String       @unique
+  password         String
+  role             Role         @default(USER)
+  token            Token[]
+  company          Company?     @relation(fields: [companyId], references: [id])
+  companyId        String?      @map("company_id")
+  position         Position     @relation(fields: [positionId], references: [id])
+  positionId       String       @map("position_id")
+  extraPermissions Permission[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Token {
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id")
+
+  @@map("tokens")
+}
+
+model RegisterRequest {
+  id        String                @id @default(uuid())
+  email     String                @unique
+  phone     String
+  status    RegisterRequestStatus @default(PENDING)
+  company   Company?
+  createdAt DateTime              @default(now()) @map("created_at")
+  updatedAt DateTime              @updatedAt @map("updated_at")
+
+  @@map("register_requests")
+}
+
+enum RegisterRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("register_request_statuses")
+}
+
+model Company {
+  id                String          @id @default(uuid())
+  name              String
+  description       String
+  departments       Department[]
+  users             User[]
+  status            CompanyStatus   @default(TRIAL)
+  registerRequest   RegisterRequest @relation(fields: [registerRequestId], references: [id])
+  registerRequestId String          @unique @map("register_request_id")
+  direction         Direction       @relation(fields: [directionId], references: [id])
+  directionId       String          @map("direction_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("companies")
+}
+
+enum CompanyStatus {
+  TRIAL
+  ACTIVE
+
+  @@map("company_status")
+}
+
+model Direction {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  companies Company[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("directions")
+}
+
+model Department {
+  id        String     @id @default(uuid())
+  name      String
+  positions Position[]
+  company   Company    @relation(fields: [companyId], references: [id])
+  companyId String     @map("company_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("departments")
+}
+
+model Position {
+  id           String       @id @default(uuid())
+  name         String
+  department   Department   @relation(fields: [departmentId], references: [id])
+  departmentId String       @map("department_id")
+  permissions  Permission[]
+  user         User[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("positions")
 }

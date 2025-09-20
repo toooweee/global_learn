@@ -1,0 +1,19 @@
+services:
+  postgres:
+    container_name: gl_pg
+    image: postgres:latest
+    restart: on-failure
+    ports:
+      - "5430:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gl
+
+volumes:
+  postgres_data:
+networks:
+  gl:
+    driver: bridge
