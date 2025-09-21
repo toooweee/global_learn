@@ -18,18 +18,48 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@prisma": ["src/prisma"],
-      "@prisma/*": ["src/prisma/*"],
-      "@auth": ["src/auth"],
-      "@auth/*": ["src/auth/*"],
-      "@tokens": ["src/tokens"],
-      "@tokens/*": ["src/tokens/*"],
-      "@mail": ["src/mail"],
-      "@mail/*": ["src/mail/*"],
-      "@providers": ["src/providers"],
-      "@providers/*": ["src/providers/*"],
-      "@trpc": ["src/trpc"],
-      "@trpc/*": ["src/trpc/*"]
+      "@common": [
+        "libs/common/src"
+      ],
+      "@common/*": [
+        "libs/common/src/*"
+      ],
+      "@auth": [
+        "src/auth"
+      ],
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@mail": [
+        "src/mail"
+      ],
+      "@mail/*": [
+        "src/mail/*"
+      ],
+      "@prisma": [
+        "src/prisma"
+      ],
+      "@prisma/*": [
+        "src/prisma/*"
+      ],
+      "@providers": [
+        "src/providers"
+      ],
+      "@providers/*": [
+        "src/providers/*"
+      ],
+      "@tokens": [
+        "src/tokens"
+      ],
+      "@tokens/*": [
+        "src/tokens/*"
+      ],
+      "@trpc": [
+        "src/trpc"
+      ],
+      "@trpc/*": [
+        "src/trpc/*"
+      ]
     }
   }
 }
