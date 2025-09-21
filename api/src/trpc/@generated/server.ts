@@ -43,8 +43,7 @@ const appRouter = t.router({
     })).output(z.object({
       accessToken: z.string(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
-  }),
-  registerRequestsRouter: t.router({})
+  })
 });
 export type AppRouter = typeof appRouter;
 

@@ -3,5 +3,10 @@ import { LoginDto } from './auth.schema';
 
 @Injectable()
 export class AuthService {
-  async login(loginDto: LoginDto) {}
+  login(loginDto: LoginDto) {
+    console.log(loginDto);
+    return {
+      accessToken: 'token',
+    };
+  }
 }

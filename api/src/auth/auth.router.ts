@@ -10,7 +10,7 @@ export class AuthRouter {
     input: LoginSchema,
     output: LoginResponse,
   })
-  async login(@Input() loginDto: LoginDto) {
+  login(@Input() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 }

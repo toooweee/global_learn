@@ -24,12 +24,6 @@
       "@common/*": [
         "libs/common/src/*"
       ],
-      "@mail": [
-        "src/mail"
-      ],
-      "@mail/*": [
-        "src/mail/*"
-      ],
       "@prisma": [
         "src/prisma"
       ],
@@ -41,12 +35,6 @@
       ],
       "@providers/*": [
         "src/providers/*"
-      ],
-      "@tokens": [
-        "src/tokens"
-      ],
-      "@tokens/*": [
-        "src/tokens/*"
       ],
       "@trpc": [
         "src/trpc"
