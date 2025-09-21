@@ -35,7 +35,16 @@ const appRouter = t.router({
       id: z.string().uuid(),
       email: z.string(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
-  })
+  }),
+  authRouter: t.router({
+    login: publicProcedure.input(z.object({
+      email: z.string().email(),
+      password: z.string().min(6),
+    })).output(z.object({
+      accessToken: z.string(),
+    })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
+  }),
+  registerRequestsRouter: t.router({})
 });
 export type AppRouter = typeof appRouter;
 

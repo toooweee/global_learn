@@ -1,6 +1,6 @@
 import { Input, Mutation, Router } from 'nestjs-trpc';
-import { LoginDto, LoginResponse, LoginSchema } from '@auth/auth.schema';
-import { AuthService } from '@auth/auth.service';
+import { LoginDto, LoginResponse, LoginSchema } from './auth.schema';
+import { AuthService } from './auth.service';
 
 @Router()
 export class AuthRouter {

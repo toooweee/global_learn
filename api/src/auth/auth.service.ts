@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LoginDto } from '@auth/auth.schema';
+import { LoginDto } from './auth.schema';
 
 @Injectable()
 export class AuthService {
