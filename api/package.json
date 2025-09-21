@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.16.2",
     "@trpc/server": "^11.5.1",
+    "argon2": "^0.44.0",
     "nestjs-trpc": "^1.6.1",
     "nestjs-zod": "^5.0.1",
     "reflect-metadata": "^0.2.2",
