@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { MiddlewareOptions, MiddlewareResponse, TRPCMiddleware } from 'nestjs-trpc';
 import { TRPCError } from '@trpc/server';
 import { AppContextType } from '../../trpc/app.context.interface';
+import { TokensService } from '../../tokens/tokens.service';
 
 @Injectable()
 export class AccessMiddleware implements TRPCMiddleware {
+  constructor(private readonly tokensService: TokensService) {}
+
   async use(opts: MiddlewareOptions<AppContextType>): Promise<MiddlewareResponse> {
     const { ctx, next } = opts;
 
@@ -26,6 +29,20 @@ export class AccessMiddleware implements TRPCMiddleware {
       });
     }
 
-    return next();
+    const payload = await this.tokensService.validateAccessToken(accessToken);
+
+    if (!payload) {
+      throw new TRPCError({
+        message: 'Unauthorized',
+        code: 'UNAUTHORIZED',
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: payload,
+      },
+    });
   }
 }

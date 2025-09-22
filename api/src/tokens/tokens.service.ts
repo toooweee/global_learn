@@ -4,7 +4,7 @@ import { PrismaService } from '@prisma/prisma.service';
 import { EnvService } from '../env/env.service';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
-import { JwtPayload } from './types/jwt-payload.interface';
+import { JwtPayload, JwtVerifyPayload } from './types/jwt-payload.interface';
 
 @Injectable()
 export class TokensService {
@@ -25,14 +25,7 @@ export class TokensService {
   }
 
   async saveRefreshToken(userId: string, userAgent: string) {
-    const token = await this.prismaService.token.findFirst({
-      where: {
-        userId,
-        userAgent,
-      },
-    });
-
-    const newToken = uuidv4();
+    const token = uuidv4();
 
     return this.prismaService.token.upsert({
       where: {
@@ -42,13 +35,13 @@ export class TokensService {
         },
       },
       create: {
-        token: newToken,
+        token,
         userId,
         userAgent,
         expiresAt: add(new Date(), { days: this.getRefreshTokenExpires() }),
       },
       update: {
-        token: newToken,
+        token,
         expiresAt: add(new Date(), { days: this.getRefreshTokenExpires() }),
       },
       select: {
@@ -71,6 +64,14 @@ export class TokensService {
         token,
       },
     });
+  }
+
+  async validateAccessToken(token: string) {
+    try {
+      return await this.jwtService.verifyAsync<JwtVerifyPayload>(token);
+    } catch {
+      return null;
+    }
   }
 
   private getRefreshTokenExpires() {
