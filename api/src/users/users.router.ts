@@ -1,7 +1,8 @@
-import { Input, Mutation, Query, Router } from 'nestjs-trpc';
+import { Input, Mutation, Query, Router, UseMiddlewares } from 'nestjs-trpc';
 import { UsersService } from './users.service';
 import { CreateUserDto, UserInputSchema, UserOutputSchema } from './user.schema';
 import { z } from 'zod';
+import { AccessMiddleware } from '../auth/middleware';
 
 @Router()
 export class UsersRouter {
@@ -22,6 +23,7 @@ export class UsersRouter {
     return this.usersService.findAllUsers();
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Query({
     input: z.object({ id: z.string() }),
     output: UserOutputSchema,

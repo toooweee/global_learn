@@ -44,7 +44,10 @@ const appRouter = t.router({
       accessToken: z.string(),
       refreshToken: z.string(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
-    refresh: publicProcedure.query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+    refresh: publicProcedure.output(z.object({
+      accessToken: z.string(),
+      refreshToken: z.string(),
+    })).query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     logout: publicProcedure.query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
   })
 });

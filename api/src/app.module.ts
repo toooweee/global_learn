@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '@prisma/prisma.module';
 import { ProvidersModule } from '@providers/providers.module';
-import { TrpcModule } from '@trpc/trpc.module';
+import { TrpcModule } from './trpc/trpc.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TokensModule } from './tokens/tokens.module';

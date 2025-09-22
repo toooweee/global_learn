@@ -39,6 +39,22 @@ export class TokensService {
     });
   }
 
+  async findRefreshToken(token: string) {
+    return this.prismaService.token.findUnique({
+      where: {
+        token,
+      },
+    });
+  }
+
+  async deleteRefreshToken(token: string) {
+    return this.prismaService.token.delete({
+      where: {
+        token,
+      },
+    });
+  }
+
   private getRefreshTokenExpires() {
     return parseInt(this.envService.get('JWT_RT_EXPIRES')!);
   }

@@ -5,7 +5,7 @@ export const LoginSchema = z.object({
   password: z.string().min(6),
 });
 
-export const LoginResponse = z.object({
+export const TokenResponse = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
 });

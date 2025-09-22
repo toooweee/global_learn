@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { LoginDto } from './auth.schema';
-import { PrismaService } from '@prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { TRPCError } from '@trpc/server';
 import { TokensService } from '../tokens/tokens.service';
@@ -57,7 +56,33 @@ export class AuthService {
     }
   }
 
-  async refresh() {}
+  async refresh(token: string) {
+    const refreshToken = await this.tokensService.deleteRefreshToken(token);
+
+    if (!refreshToken) {
+      throw new TRPCError({
+        message: 'Invalid credentials',
+        code: 'UNAUTHORIZED',
+      });
+    }
+
+    const user = await this.usersService.findOne({
+      id: refreshToken.userId,
+    });
+
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const tokens = await this.tokensService.generateTokens(payload);
+
+    return {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.token,
+    };
+  }
 
   async logout() {}
 }
