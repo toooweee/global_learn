@@ -62,7 +62,9 @@ model Token {
   expiresAt DateTime @map("expires_at")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @map("user_id")
+  userAgent String   @map("user_agent")
 
+  @@unique([userId, userAgent])
   @@map("tokens")
 }
 

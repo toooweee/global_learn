@@ -12,7 +12,7 @@ export class AuthService {
     private readonly tokensService: TokensService,
   ) {}
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto, userAgent: string) {
     const { email, password } = loginDto;
 
     try {
@@ -26,7 +26,7 @@ export class AuthService {
         role: user.role,
       };
 
-      const tokens = await this.tokensService.generateTokens(payload);
+      const tokens = await this.tokensService.generateTokens(payload, userAgent);
 
       return {
         accessToken: tokens.accessToken,
@@ -56,10 +56,19 @@ export class AuthService {
     }
   }
 
-  async refresh(token: string) {
-    const refreshToken = await this.tokensService.deleteRefreshToken(token);
+  async refresh(token: string, userAgent: string) {
+    const refreshToken = await this.tokensService.findRefreshToken(token);
 
     if (!refreshToken) {
+      throw new TRPCError({
+        message: 'Invalid credentials',
+        code: 'UNAUTHORIZED',
+      });
+    }
+
+    await this.tokensService.deleteRefreshToken(refreshToken.token);
+
+    if (new Date() > new Date(refreshToken.expiresAt)) {
       throw new TRPCError({
         message: 'Invalid credentials',
         code: 'UNAUTHORIZED',
@@ -76,7 +85,7 @@ export class AuthService {
       role: user.role,
     };
 
-    const tokens = await this.tokensService.generateTokens(payload);
+    const tokens = await this.tokensService.generateTokens(payload, userAgent);
 
     return {
       accessToken: tokens.accessToken,

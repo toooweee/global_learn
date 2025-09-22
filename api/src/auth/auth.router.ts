@@ -16,7 +16,9 @@ export class AuthRouter {
     output: TokenResponse,
   })
   async login(@Ctx() ctx: AppContextType, @Input() loginDto: LoginDto) {
-    const tokens = await this.authService.login(loginDto);
+    const userAgent = ctx.req.headers['user-agent'];
+
+    const tokens = await this.authService.login(loginDto, userAgent || 'unknown');
 
     const cookies = cookieFactory(ctx.req, ctx.res);
 
@@ -32,7 +34,6 @@ export class AuthRouter {
     output: TokenResponse,
   })
   async refresh(@Ctx() ctx: AppContextType) {
-    console.log(ctx.req.headers);
     const cookies = cookieFactory(ctx.req, ctx.res);
 
     const refreshToken = cookies.get(CONSTANTS.REFRESH_TOKEN);
@@ -44,7 +45,9 @@ export class AuthRouter {
       });
     }
 
-    const tokens = await this.authService.refresh(refreshToken);
+    const userAgent = ctx.req.headers['user-agent'];
+
+    const tokens = await this.authService.refresh(refreshToken, userAgent || 'unknown');
 
     cookies.set(CONSTANTS.REFRESH_TOKEN, tokens.refreshToken);
 
@@ -55,7 +58,9 @@ export class AuthRouter {
   }
 
   @Query()
-  async logout() {
+  async logout(@Ctx() ctx: AppContextType) {
+    const cookies = cookieFactory(ctx.req, ctx.res);
+    cookies.remove(CONSTANTS.REFRESH_TOKEN);
     return this.authService.logout();
   }
 }

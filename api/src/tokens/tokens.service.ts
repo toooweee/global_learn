@@ -14,9 +14,9 @@ export class TokensService {
     private readonly envService: EnvService,
   ) {}
 
-  async generateTokens(payload: JwtPayload) {
+  async generateTokens(payload: JwtPayload, userAgent: string) {
     const accessToken = await this.jwtService.signAsync(payload);
-    const { token } = await this.saveRefreshToken(payload.sub);
+    const { token } = await this.saveRefreshToken(payload.sub, userAgent);
 
     return {
       accessToken,
@@ -24,13 +24,31 @@ export class TokensService {
     };
   }
 
-  async saveRefreshToken(userId: string) {
-    const token = uuidv4();
-
-    return this.prismaService.token.create({
-      data: {
-        token,
+  async saveRefreshToken(userId: string, userAgent: string) {
+    const token = await this.prismaService.token.findFirst({
+      where: {
         userId,
+        userAgent,
+      },
+    });
+
+    const newToken = uuidv4();
+
+    return this.prismaService.token.upsert({
+      where: {
+        userId_userAgent: {
+          userId,
+          userAgent,
+        },
+      },
+      create: {
+        token: newToken,
+        userId,
+        userAgent,
+        expiresAt: add(new Date(), { days: this.getRefreshTokenExpires() }),
+      },
+      update: {
+        token: newToken,
         expiresAt: add(new Date(), { days: this.getRefreshTokenExpires() }),
       },
       select: {
