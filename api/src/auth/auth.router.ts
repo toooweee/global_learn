@@ -60,6 +60,7 @@ export class AuthRouter {
   @Query()
   async logout(@Ctx() ctx: AppContextType) {
     const cookies = cookieFactory(ctx.req, ctx.res);
+    const refreshToken = cookies.get(CONSTANTS.REFRESH_TOKEN);
     cookies.remove(CONSTANTS.REFRESH_TOKEN);
     return this.authService.logout();
   }

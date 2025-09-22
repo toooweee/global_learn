@@ -16,6 +16,7 @@ export class UsersRouter {
     return this.usersService.createUser(createUserDto);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Query({
     output: z.array(UserOutputSchema),
   })
@@ -32,6 +33,7 @@ export class UsersRouter {
     return this.usersService.findUser({ id });
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: z.object({
       id: z.string(),
@@ -43,6 +45,7 @@ export class UsersRouter {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: z.object({ id: z.string() }),
     output: UserOutputSchema,
