@@ -23,7 +23,7 @@ export class UsersRouter {
     return this.usersService.findAllUsers();
   }
 
-  @UseMiddlewares(AccessMiddleware)
+  // @UseMiddlewares(AccessMiddleware)
   @Query({
     input: z.object({ id: z.string() }),
     output: UserOutputSchema,

@@ -1,4 +1,5 @@
 import { trpc } from '../../lib/trpc.provider.tsx';
+import { Link } from 'react-router-dom';
 
 const UsersPage = () => {
   const { data, error, isLoading, isFetching, isError } = trpc.usersRouter.findAllUsers.useQuery();
@@ -17,9 +18,11 @@ const UsersPage = () => {
 
       <ul>
         {data?.map((user) => (
-          <li>
-            <p>id: ${user.id}</p>
-            <p>Email: ${user.email}</p>
+          <li key={user.id}>
+            <Link to={`/users/${user.id}`}>
+              <p>id: ${user.id}</p>
+              <p>Email: ${user.email}</p>
+            </Link>
           </li>
         ))}
       </ul>
