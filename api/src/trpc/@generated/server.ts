@@ -42,13 +42,13 @@ const appRouter = t.router({
       password: z.string().min(6),
     })).output(z.object({
       accessToken: z.string(),
-      refreshToken: z.string(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     refresh: publicProcedure.output(z.object({
       accessToken: z.string(),
-      refreshToken: z.string(),
     })).query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
-    logout: publicProcedure.query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
+    logout: publicProcedure.output(z.object({
+      success: z.boolean(),
+    })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
   })
 });
 export type AppRouter = typeof appRouter;

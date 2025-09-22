@@ -93,5 +93,7 @@ export class AuthService {
     };
   }
 
-  async logout() {}
+  async logout(token: string) {
+    return this.tokensService.deleteRefreshToken(token);
+  }
 }

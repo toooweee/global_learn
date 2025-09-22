@@ -26,7 +26,6 @@ export class AuthRouter {
 
     return {
       accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
     };
   }
 
@@ -53,15 +52,32 @@ export class AuthRouter {
 
     return {
       accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
     };
   }
 
-  @Query()
+  @Mutation({
+    output: z.object({
+      success: z.boolean(),
+    }),
+  })
   async logout(@Ctx() ctx: AppContextType) {
     const cookies = cookieFactory(ctx.req, ctx.res);
+
     const refreshToken = cookies.get(CONSTANTS.REFRESH_TOKEN);
+
+    if (!refreshToken) {
+      throw new TRPCError({
+        message: 'Unauthorized',
+        code: 'UNAUTHORIZED',
+      });
+    }
+
     cookies.remove(CONSTANTS.REFRESH_TOKEN);
-    return this.authService.logout();
+
+    await this.authService.logout(refreshToken);
+
+    return {
+      success: true,
+    };
   }
 }
