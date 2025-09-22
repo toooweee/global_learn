@@ -8,11 +8,14 @@ import { TokensModule } from './tokens/tokens.module';
 import { RegisterRequestsModule } from './register-requests/register-requests.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ConfigModule } from '@nestjs/config';
+import { EnvModule } from './env/env.module';
+import { EnvSchema } from './env/env';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: (env) => EnvSchema.parse(env),
     }),
     PrismaModule,
     UsersModule,
@@ -22,6 +25,7 @@ import { ConfigModule } from '@nestjs/config';
     TokensModule,
     RegisterRequestsModule,
     CompaniesModule,
+    EnvModule,
   ],
 })
 export class AppModule {}
