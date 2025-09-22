@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@global_learn/api": "workspace:*",
+    "@tanstack/react-query": "^5.90.1",
+    "@trpc/client": "^11.5.1",
+    "@trpc/react-query": "^11.5.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

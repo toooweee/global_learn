@@ -131,6 +131,8 @@ export class UsersService {
     });
   }
 
+  async me() {}
+
   async comparePassword(hashedPassword: string, password: string) {
     const isPasswordMatching = await argon.verify(hashedPassword, password);
 

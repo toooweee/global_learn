@@ -66,10 +66,9 @@ export class AuthRouter {
     const refreshToken = cookies.get(CONSTANTS.REFRESH_TOKEN);
 
     if (!refreshToken) {
-      throw new TRPCError({
-        message: 'Unauthorized',
-        code: 'UNAUTHORIZED',
-      });
+      return {
+        success: true,
+      };
     }
 
     cookies.remove(CONSTANTS.REFRESH_TOKEN);

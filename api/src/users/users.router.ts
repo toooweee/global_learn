@@ -16,7 +16,6 @@ export class UsersRouter {
     return this.usersService.createUser(createUserDto);
   }
 
-  @UseMiddlewares(AccessMiddleware)
   @Query({
     output: z.array(UserOutputSchema),
   })
