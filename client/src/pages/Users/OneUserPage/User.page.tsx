@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { trpc } from '../../lib/trpc.provider.tsx';
+import { trpc } from '../../../lib/trpc.provider.tsx';
 
 const UserPage = () => {
   const { id } = useParams() as { id: string };

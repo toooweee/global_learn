@@ -1,15 +1,16 @@
-import UsersPage from './pages/Users/Users.page.tsx';
 import Header from './components/Header/Header.tsx';
 import { Route, Routes } from 'react-router-dom';
-import UserPage from './pages/Users/User.page.tsx';
+import UsersPage from './pages/Users/AllUsersPage/Users.page.tsx';
+import UserPage from './pages/Users/OneUserPage/User.page.tsx';
+import { allUsersRoute, oneUserRoute } from './lib/routes.ts';
 
 const App = () => {
   return (
     <>
       <Header />
       <Routes>
-        <Route path={'/users'} element={<UsersPage />} />
-        <Route path={'/users/:id'} element={<UserPage />} />
+        <Route path={allUsersRoute()} element={<UsersPage />} />
+        <Route path={oneUserRoute({ id: ':id' })} element={<UserPage />} />
       </Routes>
     </>
   );
