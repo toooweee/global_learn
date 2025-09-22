@@ -27,7 +27,7 @@ export class UsersRouter {
     output: UserOutputSchema,
   })
   async findUser(@Input('id') id: string) {
-    return this.usersService.findOne(id);
+    return this.usersService.findUser({ id });
   }
 
   @Mutation({
@@ -37,8 +37,8 @@ export class UsersRouter {
     }),
     output: UserOutputSchema,
   })
-  async update(@Input('id') id: string, @Input() updateUserDto: Partial<CreateUserDto>) {
-    return this.usersService.update(id, updateUserDto);
+  async updateUser(@Input('id') id: string, @Input() updateUserDto: Partial<CreateUserDto>) {
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Mutation({

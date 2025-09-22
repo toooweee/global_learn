@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
-import { ZodExceptionFilter } from '@common/exception-filter/zod-exception.filter';
 
 @Module({
   providers: [
@@ -12,10 +11,6 @@ import { ZodExceptionFilter } from '@common/exception-filter/zod-exception.filte
     {
       provide: APP_INTERCEPTOR,
       useClass: ZodSerializerInterceptor,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: ZodExceptionFilter,
     },
   ],
 })

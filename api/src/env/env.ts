@@ -6,6 +6,9 @@ export const EnvSchema = z.object({
   POSTGRES_USER: z.string(),
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DATABASE: z.string(),
+  JWT_SECRET: z.string(),
+  JWT_AT_EXPIRES: z.string(),
+  JWT_RT_EXPIRES: z.string(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

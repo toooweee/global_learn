@@ -4,5 +4,6 @@ import { UsersRouter } from './users.router';
 
 @Module({
   providers: [UsersService, UsersRouter],
+  exports: [UsersService],
 })
 export class UsersModule {}

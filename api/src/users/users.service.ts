@@ -3,6 +3,7 @@ import { PrismaService } from '@prisma/prisma.service';
 import { CreateUserDto } from './user.schema';
 import { TRPCError } from '@trpc/server';
 import * as argon from 'argon2';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -47,10 +48,12 @@ export class UsersService {
     });
   }
 
-  async findOne(id: string) {
+  async findUser(where: Prisma.UserWhereUniqueInput) {
     const user = await this.prismaService.user.findUnique({
-      where: {
-        id,
+      where,
+      select: {
+        id: true,
+        email: true,
       },
     });
 
@@ -64,7 +67,22 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: Partial<CreateUserDto>) {
+  async findOne(where: Prisma.UserWhereUniqueInput) {
+    const user = await this.prismaService.user.findUnique({
+      where,
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        message: 'User not found',
+        code: 'NOT_FOUND',
+      });
+    }
+
+    return user;
+  }
+
+  async updateUser(id: string, updateUserDto: Partial<CreateUserDto>) {
     const user = await this.prismaService.user.findUnique({
       where: {
         id,
@@ -111,5 +129,18 @@ export class UsersService {
         email: true,
       },
     });
+  }
+
+  async comparePassword(hashedPassword: string, password: string) {
+    const isPasswordMatching = await argon.verify(hashedPassword, password);
+
+    if (!isPasswordMatching) {
+      throw new TRPCError({
+        message: 'Invalid credentials',
+        code: 'UNAUTHORIZED',
+      });
+    }
+
+    return isPasswordMatching;
   }
 }
