@@ -192,6 +192,6 @@ export class PositionsService {
       });
     }
 
-    return this.prismaService.position.delete({ where: { id } });
+    await this.prismaService.position.delete({ where: { id } });
   }
 }

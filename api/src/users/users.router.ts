@@ -1,8 +1,18 @@
-import { Input, Mutation, Query, Router, UseMiddlewares } from 'nestjs-trpc';
+import { Ctx, Input, Mutation, Query, Router, UseMiddlewares } from 'nestjs-trpc';
 import { UsersService } from './users.service';
-import { CreateUserDto, UserInputSchema, UserOutputSchema } from './user.schema';
+import {
+  CreateUserDto,
+  CreateUserWithProfileDto,
+  CreateUserWithProfileDtoSchema,
+  UserInputSchema,
+  UserMeSchema,
+  UserOutputSchema,
+  UserWithProfileOutputSchema,
+} from './user.schema';
 import { z } from 'zod';
 import { AccessMiddleware } from '../auth/middleware';
+import { AppContextType } from '../trpc/app.context.interface';
+import { TRPCError } from '@trpc/server';
 
 @Router()
 export class UsersRouter {
@@ -51,5 +61,26 @@ export class UsersRouter {
   })
   async deleteUser(@Input('id') id: string) {
     return this.usersService.deleteUser(id);
+  }
+
+  @UseMiddlewares(AccessMiddleware)
+  @Query({
+    output: UserMeSchema,
+  })
+  async me(@Ctx() ctx: AppContextType) {
+    return this.usersService.me(ctx.user?.sub);
+  }
+
+  // for companies
+  @UseMiddlewares(AccessMiddleware)
+  @Mutation({
+    input: CreateUserWithProfileDtoSchema,
+    output: UserWithProfileOutputSchema,
+  })
+  async createUserWithProfile(@Input() dto: CreateUserWithProfileDto, @Ctx() ctx: AppContextType) {
+    if (!ctx.user?.companyId) {
+      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No company access' });
+    }
+    return this.usersService.createUserWithProfile(ctx.user.companyId, dto);
   }
 }

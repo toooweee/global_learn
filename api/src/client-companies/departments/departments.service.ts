@@ -148,6 +148,7 @@ export class DepartmentsService {
       where: { id, companyId },
       include: { positions: { select: { id: true } } },
     });
+
     if (!department) {
       throw new TRPCError({
         message: `Департамент с ID "${id}" не найден в компании "${companyId}"`,
@@ -162,6 +163,6 @@ export class DepartmentsService {
       });
     }
 
-    return this.prismaService.department.delete({ where: { id } });
+    await this.prismaService.department.delete({ where: { id } });
   }
 }

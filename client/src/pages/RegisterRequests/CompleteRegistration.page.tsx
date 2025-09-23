@@ -2,6 +2,8 @@ import { type FormEvent, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { trpc } from '../../lib/trpc.provider';
 import styles from './CompleteRegistration.module.scss';
+import { loginRoute } from '../../lib/routes';
+import MultiSelect from '../../components/MultiSelect/MultiSelect';
 
 const CompleteRegistrationPage = () => {
   const completeMutation = trpc.registerRequestsRouter.completeRegistration.useMutation();
@@ -11,11 +13,13 @@ const CompleteRegistrationPage = () => {
   const [password, setPassword] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [companyDescription, setCompanyDescription] = useState('');
-  const [companyDirections, setCompanyDirections] = useState('');
+  const [companyDirections, setCompanyDirections] = useState<string[]>([]);
   const [companyAddress, setCompanyAddress] = useState('');
   const [companyFoundationDate, setCompanyFoundationDate] = useState('');
-  const [registerRequestId, setRegisterRequestId] = useState('');
   const [companyLegalFormId, setCompanyLegalFormId] = useState('');
+
+  const legalFormsQuery = trpc.legalFormsRouter.findAll.useQuery();
+  const directionsQuery = trpc.directionsRouter.findAll.useQuery();
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -34,17 +38,16 @@ const CompleteRegistrationPage = () => {
         company: {
           name: companyName,
           description: companyDescription,
-          directions: companyDirections
-            .split(',')
-            .map((s) => s.trim())
-            .filter(Boolean),
+          directions: companyDirections,
           address: companyAddress,
           foundationDate: companyFoundationDate,
-          registerRequestId,
           companyLegalFormId,
         },
       } as any);
       setSuccess(`Done: userId=${(res as any).userId}, companyId=${(res as any).companyId}`);
+      if (typeof window !== 'undefined') {
+        window.location.assign(loginRoute());
+      }
     } catch (err: any) {
       setError(err?.message ?? 'Failed');
     }
@@ -94,12 +97,13 @@ const CompleteRegistrationPage = () => {
               required
             />
           </div>
-          <div className={styles.field}>
-            <label>Направления (через запятую)</label>
-            <input
-              className={styles.input}
+          <div className={`${styles.field} ${styles.fullRow}`}>
+            <label>Направления</label>
+            <MultiSelect
+              options={(directionsQuery.data ?? []).map((d: any) => ({ label: d.name, value: d.id ?? d.name }))}
               value={companyDirections}
-              onChange={(e) => setCompanyDirections(e.target.value)}
+              onChange={setCompanyDirections}
+              placeholder="Выберите направления"
             />
           </div>
           <div className={styles.field}>
@@ -115,28 +119,27 @@ const CompleteRegistrationPage = () => {
             <label>Дата основания</label>
             <input
               className={styles.input}
+              type="date"
               value={companyFoundationDate}
               onChange={(e) => setCompanyFoundationDate(e.target.value)}
               required
             />
           </div>
           <div className={styles.field}>
-            <label>ID заявки</label>
-            <input
-              className={styles.input}
-              value={registerRequestId}
-              onChange={(e) => setRegisterRequestId(e.target.value)}
-              required
-            />
-          </div>
-          <div className={styles.field}>
-            <label>ID юр. формы</label>
-            <input
+            <label>Юридическая форма</label>
+            <select
               className={styles.input}
               value={companyLegalFormId}
               onChange={(e) => setCompanyLegalFormId(e.target.value)}
               required
-            />
+            >
+              <option value="">Выберите форму</option>
+              {(legalFormsQuery.data ?? []).map((lf) => (
+                <option key={lf.id} value={lf.id}>
+                  {lf.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         {error && <p className={styles.error}>{error}</p>}

@@ -1,0 +1,36 @@
+@use '../../styles/_tokens' as *;
+@use '../../styles/_mixins' as *;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  z-index: 9999;
+}
+
+.content {
+  width: 100%;
+  max-width: 520px;
+  @include card-base();
+  padding: $space-5;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $space-3;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 18px;
+}
+.close {
+  @include button-primary();
+  padding: 8px 12px;
+}

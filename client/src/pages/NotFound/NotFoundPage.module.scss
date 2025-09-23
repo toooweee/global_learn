@@ -1,16 +1,27 @@
+@use '../../styles/_tokens' as *;
+
 .not-found {
   display: flex;
+  min-height: calc(100dvh - 64px);
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: $space-3;
+  text-align: center;
 }
 
 .back-link {
   display: inline-block;
-  color: blue;
-  transition: all 0.2s;
-}
+  color: var(--primary);
+  transition:
+    color 0.2s,
+    transform 0.05s;
+  padding: 8px 12px;
+  border-radius: $radius-md;
+  background: var(--primary-50);
 
-.back-link:hover {
-  opacity: 0.95;
+  &:hover {
+    color: var(--text);
+    transform: translateY(-1px);
+  }
 }

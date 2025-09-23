@@ -1,0 +1,29 @@
+@use '../../styles/_tokens' as *;
+
+.container {
+  max-width: 720px;
+  margin: $space-6 auto;
+  padding: $space-5;
+}
+
+.title {
+  margin: 0 0 $space-4;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  padding: $space-4;
+  background: var(--surface);
+}
+
+.label {
+  color: var(--muted);
+  margin-right: $space-2;
+}
+
+.error {
+  color: #dc2626;
+}

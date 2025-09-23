@@ -47,7 +47,7 @@ export class AccessMiddleware implements TRPCMiddleware {
       select: { companyId: true },
     });
 
-    if (!user || !user.companyId) {
+    if (!user) {
       throw new TRPCError({
         message: 'Пользователь не привязан к компании',
         code: 'FORBIDDEN',
@@ -59,7 +59,7 @@ export class AccessMiddleware implements TRPCMiddleware {
         ...ctx,
         user: {
           ...payload,
-          companyId: user.companyId, // Добавляем companyId
+          companyId: user.companyId || undefined, // Добавляем companyId
         },
       },
     });

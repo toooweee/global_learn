@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { CreateUserDto } from './user.schema';
+import { CreateUserDto, CreateUserWithProfileDto } from './user.schema';
 import { TRPCError } from '@trpc/server';
 import * as argon from 'argon2';
 import { Prisma } from '@prisma/client';
@@ -131,7 +131,34 @@ export class UsersService {
     });
   }
 
-  async me() {}
+  async me(id?: string) {
+    if (!id) {
+      throw new TRPCError({
+        message: 'Unauthorized',
+        code: 'UNAUTHORIZED',
+      });
+    }
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        company: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    return {
+      id: user!.id,
+      role: user!.role,
+      email: user!.email,
+      companyId: user?.companyId || undefined,
+    };
+  }
 
   async comparePassword(hashedPassword: string, password: string) {
     const isPasswordMatching = await argon.verify(hashedPassword, password);
@@ -144,5 +171,86 @@ export class UsersService {
     }
 
     return isPasswordMatching;
+  }
+
+  // for companies
+  async createUserWithProfile(companyId: string, createUserWithProfileDto: CreateUserWithProfileDto) {
+    const { email, password, role, name, surname, bio, employmentDate, positionId } = createUserWithProfileDto;
+
+    const existingUser = await this.prismaService.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      throw new TRPCError({
+        message: `User with email ${email} already exists`,
+        code: 'CONFLICT',
+      });
+    }
+
+    const existingCompany = await this.prismaService.company.findUnique({
+      where: { id: companyId },
+    });
+
+    if (!existingCompany) {
+      throw new TRPCError({
+        message: `Company with ID ${companyId} not found`,
+        code: 'NOT_FOUND',
+      });
+    }
+
+    if (positionId) {
+      const existingPosition = await this.prismaService.position.findUnique({
+        where: { id: positionId },
+      });
+
+      if (!existingPosition) {
+        throw new TRPCError({
+          message: `Position with ID ${positionId} not found`,
+          code: 'NOT_FOUND',
+        });
+      }
+    }
+
+    const hashedPassword = await argon.hash(password);
+
+    return await this.prismaService.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          companyId,
+          positionId,
+        },
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          companyId: true,
+        },
+      });
+
+      const newProfile = await tx.userProfile.create({
+        data: {
+          name,
+          surname,
+          bio,
+          employmentDate: new Date(employmentDate),
+          userId: newUser.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          surname: true,
+          bio: true,
+          employmentDate: true,
+        },
+      });
+
+      return {
+        ...newUser,
+        profile: newProfile,
+      };
+    });
   }
 }

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { trpc } from '../../../lib/trpc.provider.tsx';
 import { oneUserRoute } from '../../../lib/routes.ts';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useMemo } from 'react';
+import Modal from '../../../components/Modal/Modal';
 import styles from './Users.module.scss';
 
 const UsersPage = () => {
@@ -20,13 +21,41 @@ const UsersPage = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<'newest' | 'oldest' | 'email_asc' | 'email_desc'>('newest');
+  const [open, setOpen] = useState(false);
 
   const onCreate = async (e: FormEvent) => {
     e.preventDefault();
     await createMutation.mutateAsync({ email, password });
     setEmail('');
     setPassword('');
+    setOpen(false);
   };
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const base = (data ?? []).filter((u) =>
+      q ? u.email.toLowerCase().includes(q) || u.id.toLowerCase().includes(q) : true,
+    );
+    const sorted = [...base];
+    switch (sort) {
+      case 'email_asc':
+        sorted.sort((a, b) => a.email.localeCompare(b.email));
+        break;
+      case 'email_desc':
+        sorted.sort((a, b) => b.email.localeCompare(a.email));
+        break;
+      case 'oldest':
+        sorted.sort((a, b) => (a.createdAt ?? '').localeCompare(b.createdAt ?? ''));
+        break;
+      case 'newest':
+      default:
+        sorted.sort((a, b) => (b.createdAt ?? '').localeCompare(a.createdAt ?? ''));
+        break;
+    }
+    return sorted;
+  }, [data, query, sort]);
 
   if (isLoading || isFetching) {
     return <div>Loading...</div>;
@@ -40,31 +69,51 @@ const UsersPage = () => {
     <div className={styles.container}>
       <h1 className={styles.title}>Пользователи</h1>
 
-      <form className={styles.form} onSubmit={onCreate}>
+      <div className={styles.toolbar}>
         <input
           className={styles.input}
-          placeholder={'email'}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder={'Поиск по email или id'}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
-        <input
-          className={styles.input}
-          placeholder={'password'}
-          value={password}
-          type={'password'}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button className={styles.button} type={'submit'} disabled={createMutation.isPending}>
-          Создать
+        <select className={styles.select} value={sort} onChange={(e) => setSort(e.target.value as any)}>
+          <option value="newest">Сначала новые</option>
+          <option value="oldest">Сначала старые</option>
+          <option value="email_asc">Email A→Z</option>
+          <option value="email_desc">Email Z→A</option>
+        </select>
+        <button className={styles.button} type="button" onClick={() => setOpen(true)}>
+          Создать пользователя
         </button>
-      </form>
+      </div>
+
+      <Modal open={open} title="Создание пользователя" onClose={() => setOpen(false)}>
+        <form className={styles.form} onSubmit={onCreate}>
+          <input
+            className={styles.input}
+            placeholder={'email'}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className={styles.input}
+            placeholder={'password'}
+            value={password}
+            type={'password'}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button className={styles.button} type={'submit'} disabled={createMutation.isPending}>
+            Создать
+          </button>
+        </form>
+      </Modal>
 
       <ul className={styles.list}>
-        {data?.map((user) => (
+        {filtered.map((user) => (
           <li className={styles.item} key={user.id}>
             <Link className={styles.link} to={oneUserRoute({ id: user.id })}>
-              <p>id: ${user.id}</p>
-              <p>Email: ${user.email}</p>
+              <div className={styles.userEmail}>{user.email}</div>
+              <div className={styles.userMeta}>id: {user.id}</div>
             </Link>
             <button
               className={styles.button}

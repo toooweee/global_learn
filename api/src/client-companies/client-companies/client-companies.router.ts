@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { Router, Query, Mutation, Input, Ctx } from 'nestjs-trpc';
+import { Router, Query, Mutation, Input, Ctx, UseMiddlewares } from 'nestjs-trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { PositionsService } from '../positions/positions.service';
@@ -19,14 +18,43 @@ import {
   PositionsSchemaInput,
   PositionsSchema,
 } from '../positions/schema/positions.schema';
+import { AccessMiddleware } from '../../auth/middleware';
+import { CompanySchema, UpdateCompanyDto, UpdateCompanySchema } from './schema/client-companies.schema';
+import { ClientCompaniesService } from './client-companies.service';
 
 @Router()
 export class ClientCompaniesRouter {
   constructor(
+    private readonly companiesService: ClientCompaniesService,
     private readonly departmentsService: DepartmentsService,
     private readonly positionsService: PositionsService,
   ) {}
 
+  @UseMiddlewares(AccessMiddleware)
+  @Query({
+    input: z.object({ id: z.string().uuid() }).optional(),
+    output: CompanySchema,
+  })
+  async findOneCompany(@Ctx() ctx: AppContextType, @Input() input?: { id: string }) {
+    if (!ctx.user?.companyId) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+    return this.companiesService.findOne(ctx.user.companyId, input?.id);
+  }
+
+  @UseMiddlewares(AccessMiddleware)
+  @Mutation({
+    input: UpdateCompanySchema,
+    output: CompanySchema,
+  })
+  async updateCompany(@Input() dto: UpdateCompanyDto, @Ctx() ctx: AppContextType) {
+    if (!ctx.user?.companyId) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
+    return this.companiesService.update(ctx.user.companyId, dto);
+  }
+
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: DepartmentsSchemaInput,
     output: DepartmentsSchema,
@@ -38,6 +66,7 @@ export class ClientCompaniesRouter {
     return this.departmentsService.create(ctx.user.companyId, dto);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Query({
     input: z.object({ id: z.string().uuid() }),
     output: DepartmentsSchema,
@@ -49,6 +78,7 @@ export class ClientCompaniesRouter {
     return this.departmentsService.findOne(ctx.user.companyId, input.id);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Query({
     output: DepartmentsListSchema,
   })
@@ -56,9 +86,11 @@ export class ClientCompaniesRouter {
     if (!ctx.user?.companyId) {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
+
     return this.departmentsService.findAll(ctx.user.companyId);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: UpdateDepartmentDto,
     output: DepartmentsSchema,
@@ -70,6 +102,7 @@ export class ClientCompaniesRouter {
     return this.departmentsService.update(ctx.user.companyId, dto);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: z.object({ id: z.string().uuid() }),
     output: z.void(),
@@ -83,6 +116,7 @@ export class ClientCompaniesRouter {
 
   // Позиции
 
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: PositionsSchemaInput,
     output: PositionsSchema,
@@ -94,6 +128,7 @@ export class ClientCompaniesRouter {
     return this.positionsService.create(ctx.user.companyId, dto);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Query({
     input: z.object({ id: z.string().uuid() }),
     output: PositionsSchema,
@@ -105,6 +140,7 @@ export class ClientCompaniesRouter {
     return this.positionsService.findOne(ctx.user.companyId, input.id);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Query({
     output: PositionsListSchema,
   })
@@ -115,6 +151,7 @@ export class ClientCompaniesRouter {
     return this.positionsService.findAll(ctx.user.companyId);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: UpdatePositionDto,
     output: PositionsSchema,
@@ -126,6 +163,7 @@ export class ClientCompaniesRouter {
     return this.positionsService.update(ctx.user.companyId, dto);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: z.object({ id: z.string().uuid() }),
     output: z.void(),

@@ -48,7 +48,12 @@ const CreateRegisterRequestPage = () => {
           />
         </div>
         {error && <p className={styles.error}>{error}</p>}
-        {success && <p className={styles.success}>Отправлено</p>}
+        {success && (
+          <>
+            <p className={styles.success}>Заявка отправлена</p>
+            <p className={styles.notice}>Проверьте почту: мы отправили ссылку для завершения регистрации.</p>
+          </>
+        )}
         <button className={styles.button} type="submit" disabled={createMutation.isPending}>
           {createMutation.isPending ? '...' : 'Отправить'}
         </button>

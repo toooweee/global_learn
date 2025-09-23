@@ -109,17 +109,28 @@ export class RegisterRequestsService {
   async completeRegistration(dto: CompleteRegistrationDto) {
     const isTokenValid = await this.registerRequestTokenService.validateToken(dto.token);
 
-    if (isTokenValid) {
+    if (isTokenValid.isValid) {
       const { user, company } = dto;
 
-      const newUser = await this.usersService.createUser({
-        ...user,
-        role: Role.CLIENT_ADMIN,
+      return await this.prismaService.$transaction(async (tx) => {
+        const newCompany = await this.companiesService.create({
+          ...company,
+          registerRequestId: isTokenValid.registerRequestId,
+        });
+
+        const newUser = await this.usersService.createUser({
+          ...user,
+          role: Role.CLIENT_ADMIN,
+        });
+
+        const updatedUser = await tx.user.update({
+          where: { id: newUser.id },
+          data: { companyId: newCompany.id },
+          select: { id: true, email: true },
+        });
+
+        return { userId: updatedUser.id, companyId: newCompany.id };
       });
-
-      const newCompany = await this.companiesService.create(company);
-
-      return { userId: newUser.id, companyId: newCompany.id };
     }
 
     throw new TRPCError({

@@ -1,0 +1,67 @@
+/* Reusable mixins */
+@use './_tokens' as *;
+
+@mixin focus-ring($color) {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba($color, 0.35);
+}
+
+@mixin container($max: 1200px, $pad: 16px) {
+  max-width: calc(#{$max} + #{$pad} * 2);
+  padding: 0 $pad;
+  margin: 0 auto;
+}
+
+@mixin button-reset() {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+}
+
+// Primary button primitive
+@mixin button-primary() {
+  @include button-reset();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: $radius-md;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.18);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.05s ease;
+
+  &:hover {
+    background: var(--primary-600);
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.24);
+    transform: translateY(-1px);
+  }
+}
+
+// Input primitive
+@mixin input-base() {
+  display: inline-flex;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: $radius-sm;
+  background: var(--surface);
+  color: var(--text);
+
+  &:focus {
+    @include focus-ring(#4f46e5);
+  }
+}
+
+// Card primitive
+@mixin card-base() {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+}

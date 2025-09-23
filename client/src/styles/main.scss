@@ -1,0 +1,59 @@
+@use './_tokens' as *;
+@use './_mixins' as *;
+@use './_reset';
+@use './themes';
+
+:root {
+  color-scheme: light dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable both-edges;
+}
+
+body {
+  min-height: 100%;
+  font-family: $font-sans;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  overflow-y: scroll;
+}
+
+.container {
+  @include container(1200px, 16px);
+  margin-top: $space-6;
+}
+
+/* Generic UI primitives */
+.btn {
+  @include button-reset();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: $radius-md;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.18);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.05s ease;
+
+  &:hover {
+    background: var(--primary-600);
+    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.24);
+    transform: translateY(-1px);
+  }
+}
+
+.card {
+  @include card-base();
+}
+
+.input {
+  @include input-base();
+}

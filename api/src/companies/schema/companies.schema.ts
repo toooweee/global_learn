@@ -5,7 +5,7 @@ export const CompaniesCreateSchemaInput = z.object({
   description: z.string(),
   directions: z.string().array(),
   address: z.string(),
-  foundationDate: z.string(),
+  foundationDate: z.coerce.date(),
   registerRequestId: z.string(),
   companyLegalFormId: z.string(),
 });

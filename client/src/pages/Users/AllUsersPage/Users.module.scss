@@ -1,11 +1,14 @@
+@use '../../../styles/_tokens' as *;
+@use '../../../styles/_mixins' as *;
+
 .container {
   max-width: 900px;
-  margin: 24px auto;
-  padding: 0 16px;
+  margin: $space-6 auto;
+  padding: 0 $space-4;
 }
 
 .title {
-  margin: 0 0 16px;
+  margin: 0 0 $space-4;
   font-size: 22px;
   font-weight: 700;
 }
@@ -13,24 +16,27 @@
 .form {
   display: grid;
   grid-template-columns: 1fr 1fr auto;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: $space-3;
+  margin-bottom: $space-3;
+}
+
+.select {
+  @include input-base();
 }
 
 .input {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  @include input-base();
 }
 
 .button {
-  appearance: none;
-  border: 0;
-  background: #2563eb;
-  color: #fff;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
+  @include button-primary();
 }
 
 .list {
@@ -38,7 +44,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 8px;
+  gap: $space-2;
 }
 
 .item {
@@ -46,12 +52,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: $radius-sm;
+  background: var(--surface);
 }
 
 .link {
   text-decoration: none;
-  color: #111;
+  color: var(--text);
 }

@@ -36,6 +36,35 @@ const appRouter = t.router({
     deleteUser: publicProcedure.input(z.object({ id: z.string() })).output(z.object({
       id: z.string().uuid(),
       email: z.string(),
+    })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+    me: publicProcedure.output(z.object({
+      id: z.string().uuid(),
+      email: z.string().email(),
+      role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']).optional(),
+      companyId: z.string().optional(),
+    })).query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+    createUserWithProfile: publicProcedure.input(z.object({
+      email: z.string().email(),
+      password: z.string(),
+      role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']).optional(),
+      name: z.string(),
+      surname: z.string(),
+      bio: z.string().optional(),
+      employmentDate: z.coerce.date(),
+      positionId: z.string().uuid().optional(),
+      avatar: z.string().optional(),
+    })).output(z.object({
+      id: z.string().uuid(),
+      email: z.string(),
+      role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']),
+      companyId: z.string(),
+      profile: z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+        surname: z.string(),
+        bio: z.string().optional(),
+        employmentDate: z.date(),
+      }),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
   }),
   authRouter: t.router({
@@ -91,8 +120,7 @@ const appRouter = t.router({
         description: z.string(),
         directions: z.string().array(),
         address: z.string(),
-        foundationDate: z.string(),
-        registerRequestId: z.string(),
+        foundationDate: z.coerce.date(),
         companyLegalFormId: z.string(),
       }),
     })).output(z.object({
@@ -104,19 +132,34 @@ const appRouter = t.router({
     create: publicProcedure.input(z.object({
       name: z.string(),
     })).output(z.object({
+      id: z.string(),
       name: z.string(),
+      createdAt: z.coerce.date(),
+      updatedAt: z.coerce.date(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     findOne: publicProcedure.input(z.object({ id: z.string() })).output(z.object({
+      id: z.string(),
       name: z.string(),
+      createdAt: z.coerce.date(),
+      updatedAt: z.coerce.date(),
     })).query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     findAll: publicProcedure.output(z.array(z.object({
+      id: z.string(),
       name: z.string(),
+      createdAt: z.coerce.date(),
+      updatedAt: z.coerce.date(),
     }))).query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     update: publicProcedure.input(z.object({ id: z.string() })).output(z.object({
+      id: z.string(),
       name: z.string(),
+      createdAt: z.coerce.date(),
+      updatedAt: z.coerce.date(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     delete: publicProcedure.input(z.object({ id: z.string() })).output(z.object({
+      id: z.string(),
       name: z.string(),
+      createdAt: z.coerce.date(),
+      updatedAt: z.coerce.date(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
   }),
   legalFormsRouter: t.router({
@@ -157,6 +200,33 @@ const appRouter = t.router({
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
   }),
   clientCompaniesRouter: t.router({
+    findOneCompany: publicProcedure.input(z.object({ id: z.string().uuid() }).optional()).output(z.object({
+      id: z.string().uuid(),
+      name: z.string(),
+      description: z.string(),
+      address: z.string(),
+      foundationDate: z.string(),
+      status: z.enum(['TRIAL', 'ACTIVE', 'SUSPENDED', 'CANCELLED']),
+      createdAt: z.date(),
+      updatedAt: z.date(),
+    })).query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+    updateCompany: publicProcedure.input(z.object({
+      id: z.string().uuid(),
+      name: z.string().optional(),
+      description: z.string().optional(),
+      address: z.string().optional(),
+      foundationDate: z.string().optional(),
+      companyLegalFormId: z.string().uuid().optional(),
+    })).output(z.object({
+      id: z.string().uuid(),
+      name: z.string(),
+      description: z.string(),
+      address: z.string(),
+      foundationDate: z.string(),
+      status: z.enum(['TRIAL', 'ACTIVE', 'SUSPENDED', 'CANCELLED']),
+      createdAt: z.date(),
+      updatedAt: z.date(),
+    })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     createDepartment: publicProcedure.input(z.object({
       name: z.string().min(1, 'Название департамента обязательно').max(100, 'Название не должно превышать 100 символов'),
     })).output(z.object({

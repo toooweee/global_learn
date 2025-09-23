@@ -39,10 +39,19 @@ export const UpdateRegisterRequestStatusDto = z.object({
 
 export type UpdateRegisterRequestStatusDto = z.infer<typeof UpdateRegisterRequestStatusDto>;
 
+export const CompleteRegisterSchemaInput = z.object({
+  name: z.string(),
+  description: z.string(),
+  directions: z.string().array(),
+  address: z.string(),
+  foundationDate: z.coerce.date(),
+  companyLegalFormId: z.string(),
+});
+
 export const CompleteRegistrationSchemaInput = z.object({
   token: z.string(),
   user: UserInputSchema,
-  company: CompaniesCreateSchemaInput,
+  company: CompleteRegisterSchemaInput,
 });
 
 export type CompleteRegistrationDto = z.infer<typeof CompleteRegistrationSchemaInput>;

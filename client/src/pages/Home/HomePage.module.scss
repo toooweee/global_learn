@@ -1,0 +1,19 @@
+@use '../../styles/_tokens' as *;
+
+.container {
+  max-width: 720px;
+  margin: $space-6 auto;
+  padding: $space-6;
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 $space-3;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+}

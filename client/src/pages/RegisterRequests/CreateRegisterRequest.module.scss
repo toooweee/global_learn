@@ -1,14 +1,17 @@
+@use '../../styles/_tokens' as *;
+@use '../../styles/_mixins' as *;
+
 .container {
   max-width: 520px;
-  margin: 24px auto;
-  padding: 20px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  margin: $space-6 auto;
+  padding: $space-5;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
 }
 
 .title {
-  margin: 0 0 16px;
+  margin: 0 0 $space-4;
   font-size: 22px;
   font-weight: 700;
 }
@@ -16,24 +19,22 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: $space-1 + 2px;
+  margin-bottom: $space-3;
 }
 
 .input {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
+  @include input-base();
 }
 
 .button {
-  appearance: none;
-  border: 0;
-  background: #2563eb;
-  color: #fff;
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
+  @include button-primary();
+}
+
+.notice {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: $space-2;
 }
 
 .success {
