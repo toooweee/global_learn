@@ -11,6 +11,11 @@ import { ConfigModule } from '@nestjs/config';
 import { EnvModule } from './env/env.module';
 import { EnvSchema } from './env/env';
 import { EmailModule } from './email/email.module';
+import { DirectionsModule } from './directions/directions.module';
+import { LegalFormsModule } from './legal-forms/legal-forms.module';
+import { ClientCompaniesModule } from './client-companies/client-companies/client-companies.module';
+import { DepartmentsModule } from './client-companies/departments/departments.module';
+import { PositionsModule } from './client-companies/positions/positions.module';
 
 @Module({
   imports: [
@@ -28,6 +33,11 @@ import { EmailModule } from './email/email.module';
     CompaniesModule,
     EnvModule,
     EmailModule,
+    DirectionsModule,
+    LegalFormsModule,
+    ClientCompaniesModule,
+    DepartmentsModule,
+    PositionsModule,
   ],
 })
 export class AppModule {}

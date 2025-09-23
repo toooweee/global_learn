@@ -3,10 +3,14 @@ import { MiddlewareOptions, MiddlewareResponse, TRPCMiddleware } from 'nestjs-tr
 import { TRPCError } from '@trpc/server';
 import { AppContextType } from '../../trpc/app.context.interface';
 import { TokensService } from '../../tokens/tokens.service';
+import { PrismaService } from '@prisma/prisma.service';
 
 @Injectable()
 export class AccessMiddleware implements TRPCMiddleware {
-  constructor(private readonly tokensService: TokensService) {}
+  constructor(
+    private readonly tokensService: TokensService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async use(opts: MiddlewareOptions<AppContextType>): Promise<MiddlewareResponse> {
     const { ctx, next } = opts;
@@ -38,10 +42,25 @@ export class AccessMiddleware implements TRPCMiddleware {
       });
     }
 
+    const user = await this.prismaService.user.findUnique({
+      where: { id: payload.sub },
+      select: { companyId: true },
+    });
+
+    if (!user || !user.companyId) {
+      throw new TRPCError({
+        message: 'Пользователь не привязан к компании',
+        code: 'FORBIDDEN',
+      });
+    }
+
     return next({
       ctx: {
         ...ctx,
-        user: payload,
+        user: {
+          ...payload,
+          companyId: user.companyId, // Добавляем companyId
+        },
       },
     });
   }

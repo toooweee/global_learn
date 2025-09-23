@@ -1,6 +1,6 @@
 import z from 'zod';
-import { CompaniesCreateSchemaInput } from '../companies/companies.schema';
 import { UserInputSchema } from '../users/user.schema';
+import { CompaniesCreateSchemaInput } from '../companies/schema/companies.schema';
 
 export const RegisterRequestSchemaInput = z.object({
   email: z.string().email(),

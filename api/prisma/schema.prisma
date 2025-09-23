@@ -169,7 +169,7 @@ model Position {
   name         String
   department   Department @relation(fields: [departmentId], references: [id])
   departmentId String     @map("department_id")
-  user         User[]
+  users        User[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
