@@ -12,8 +12,6 @@ export const UserInputSchema = z.object({
   email: z.string().email(),
   password: z.string(),
   role: RoleSchema.optional(),
-  name: z.string().optional(),
-  surname: z.string().optional(),
 });
 
 export type CreateUserDto = z.infer<typeof UserInputSchema>;

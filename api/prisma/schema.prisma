@@ -80,7 +80,7 @@ model RegisterRequestToken {
   RegisterRequest   RegisterRequest @relation(fields: [registerRequestId], references: [id])
   registerRequestId String          @unique @map("register_request_id")
 
-  @@map("register_requst_tokens")
+  @@map("register_request_tokens")
 }
 
 enum RegisterRequestStatus {
@@ -105,7 +105,7 @@ model Company {
   registerRequest    RegisterRequest       @relation(fields: [registerRequestId], references: [id])
   registerRequestId  String                @unique @map("register_request_id")
   companyLegalForm   CompanyLegalForm      @relation(fields: [companyLegalFormId], references: [id])
-  companyLegalFormId String @map("company_legal_form_id")
+  companyLegalFormId String                @map("company_legal_form_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

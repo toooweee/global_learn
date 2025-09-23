@@ -10,8 +10,6 @@ const appRouter = t.router({
       email: z.string().email(),
       password: z.string(),
       role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']).optional(),
-      name: z.string().optional(),
-      surname: z.string().optional(),
     })).output(z.object({
       id: z.string().uuid(),
       email: z.string(),
@@ -30,8 +28,6 @@ const appRouter = t.router({
         email: z.string().email(),
         password: z.string(),
         role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']).optional(),
-        name: z.string().optional(),
-        surname: z.string().optional(),
       }).partial(),
     })).output(z.object({
       id: z.string().uuid(),
@@ -85,11 +81,20 @@ const appRouter = t.router({
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
     completeRegistration: publicProcedure.input(z.object({
       token: z.string(),
-      email: z.string().email(),
-      password: z.string(),
-      name: z.string(),
-      surname: z.string(),
-      CompaniesCreateSchemaInput,
+      user: z.object({
+        email: z.string().email(),
+        password: z.string(),
+        role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']).optional(),
+      }),
+      company: z.object({
+        name: z.string(),
+        description: z.string(),
+        directions: z.string().array(),
+        address: z.string(),
+        foundationDate: z.string(),
+        registerRequestId: z.string(),
+        companyLegalFormId: z.string(),
+      }),
     })).output(z.object({
       userId: z.string(),
       companyId: z.string(),

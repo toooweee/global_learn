@@ -4,10 +4,10 @@ export const CompaniesCreateSchemaInput = z.object({
   name: z.string(),
   description: z.string(),
   directions: z.string().array(),
-  logo: z.string(),
   address: z.string(),
   foundationDate: z.string(),
   registerRequestId: z.string(),
+  companyLegalFormId: z.string(),
 });
 
 export type CreateCompanyDto = z.infer<typeof CompaniesCreateSchemaInput>;

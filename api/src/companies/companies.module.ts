@@ -4,5 +4,6 @@ import { CompaniesRouter } from './companies.router';
 
 @Module({
   providers: [CompaniesService, CompaniesRouter],
+  exports: [CompaniesService],
 })
 export class CompaniesModule {}

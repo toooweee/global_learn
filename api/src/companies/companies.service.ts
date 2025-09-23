@@ -10,9 +10,11 @@ export class CompaniesService {
     return this.prismaService.company.create({
       data: {
         ...createCompanyDto,
-        directions: createCompanyDto.directions.map((direction) => {
-          direction;
-        }),
+        directions: {
+          create: createCompanyDto.directions.map((direction) => ({
+            directionId: direction,
+          })),
+        },
       },
     });
   }

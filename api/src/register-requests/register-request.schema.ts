@@ -1,5 +1,6 @@
 import z from 'zod';
 import { CompaniesCreateSchemaInput } from '../companies/companies.schema';
+import { UserInputSchema } from '../users/user.schema';
 
 export const RegisterRequestSchemaInput = z.object({
   email: z.string().email(),
@@ -40,10 +41,7 @@ export type UpdateRegisterRequestStatusDto = z.infer<typeof UpdateRegisterReques
 
 export const CompleteRegistrationSchemaInput = z.object({
   token: z.string(),
-  email: z.string().email(),
-  password: z.string(),
-  name: z.string(),
-  surname: z.string(),
+  user: UserInputSchema,
   company: CompaniesCreateSchemaInput,
 });
 

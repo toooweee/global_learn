@@ -13,6 +13,7 @@ import { RegisterRequestTokenService } from './register-request-tokens.service';
 import { EnvService } from '../env/env.service';
 import { UsersService } from '../users/users.service';
 import { Role } from '../users/user.schema';
+import { CompaniesService } from '../companies/companies.service';
 
 @Injectable()
 export class RegisterRequestsService {
@@ -22,6 +23,7 @@ export class RegisterRequestsService {
     private readonly registerRequestTokenService: RegisterRequestTokenService,
     private readonly envService: EnvService,
     private readonly usersService: UsersService,
+    private readonly companiesService: CompaniesService,
   ) {}
 
   async create(createRegisterRequestDto: CreateRegisterRequestDto) {
@@ -105,12 +107,24 @@ export class RegisterRequestsService {
   }
 
   async completeRegistration(dto: CompleteRegistrationDto) {
-    const user = await this.usersService.createUser({
-      email: dto.email,
-      password: dto.password,
-      role: Role.CLIENT_ADMIN,
-      name: dto.name,
-      surname: dto.surname,
+    const isTokenValid = await this.registerRequestTokenService.validateToken(dto.token);
+
+    if (isTokenValid) {
+      const { user, company } = dto;
+
+      const newUser = await this.usersService.createUser({
+        ...user,
+        role: Role.CLIENT_ADMIN,
+      });
+
+      const newCompany = await this.companiesService.create(company);
+
+      return { userId: newUser.id, companyId: newCompany.id };
+    }
+
+    return new TRPCError({
+      message: 'Your activation link is expired. Wait a new link',
+      code: 'FORBIDDEN',
     });
   }
 }

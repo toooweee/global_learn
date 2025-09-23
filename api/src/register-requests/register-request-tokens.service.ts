@@ -49,6 +49,19 @@ export class RegisterRequestTokenService {
     });
   }
 
+  async validateToken(token: string) {
+    const tokenFromDb = await this.findToken(token);
+
+    if (!tokenFromDb) {
+      throw new TRPCError({
+        message: 'Activation link expires',
+        code: 'FORBIDDEN',
+      });
+    }
+
+    return new Date() > tokenFromDb.expiresAt;
+  }
+
   async refreshToken(token: string) {
     const tokenFromDb = await this.findToken(token);
 
