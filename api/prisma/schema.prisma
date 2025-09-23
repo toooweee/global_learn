@@ -66,11 +66,21 @@ model RegisterRequest {
   phone   String
   status  RegisterRequestStatus @default(PENDING)
   company Company?
+  token   RegisterRequestToken?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("register_requests")
+}
+
+model RegisterRequestToken {
+  token             String          @unique
+  expiresAt         DateTime        @map("expires_at")
+  RegisterRequest   RegisterRequest @relation(fields: [registerRequestId], references: [id])
+  registerRequestId String          @unique @map("register_request_id")
+
+  @@map("register_requst_tokens")
 }
 
 enum RegisterRequestStatus {
@@ -82,18 +92,20 @@ enum RegisterRequestStatus {
 }
 
 model Company {
-  id                String                @id @default(uuid())
-  name              String
-  description       String
-  directions        CompaniesDirections[]
-  logo              File?
-  address           String
-  foundationDate    DateTime              @map("foundation_date")
-  departments       Department[]
-  users             User[]
-  status            CompanyStatus         @default(TRIAL)
-  registerRequest   RegisterRequest       @relation(fields: [registerRequestId], references: [id])
-  registerRequestId String                @unique @map("register_request_id")
+  id                 String                @id @default(uuid())
+  name               String
+  description        String
+  directions         CompaniesDirections[]
+  logo               File?
+  address            String
+  foundationDate     DateTime              @map("foundation_date")
+  departments        Department[]
+  users              User[]
+  status             CompanyStatus         @default(TRIAL)
+  registerRequest    RegisterRequest       @relation(fields: [registerRequestId], references: [id])
+  registerRequestId  String                @unique @map("register_request_id")
+  companyLegalForm   CompanyLegalForm      @relation(fields: [companyLegalFormId], references: [id])
+  companyLegalFormId String @map("company_legal_form_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -102,10 +114,11 @@ model Company {
 }
 
 model CompanyLegalForm {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String    @id @default(uuid())
+  name      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  companies Company[]
 
   @@map("company_legal_forms")
 }

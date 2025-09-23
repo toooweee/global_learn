@@ -9,6 +9,9 @@ const appRouter = t.router({
     createUser: publicProcedure.input(z.object({
       email: z.string().email(),
       password: z.string(),
+      role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']).optional(),
+      name: z.string().optional(),
+      surname: z.string().optional(),
     })).output(z.object({
       id: z.string().uuid(),
       email: z.string(),
@@ -26,6 +29,9 @@ const appRouter = t.router({
       data: z.object({
         email: z.string().email(),
         password: z.string(),
+        role: z.enum(['ADMIN', 'USER', 'CLIENT_ADMIN']).optional(),
+        name: z.string().optional(),
+        surname: z.string().optional(),
       }).partial(),
     })).output(z.object({
       id: z.string().uuid(),
@@ -76,8 +82,20 @@ const appRouter = t.router({
       phone: z.string(),
       status: z.string(),
       createdAt: z.date(),
+    })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+    completeRegistration: publicProcedure.input(z.object({
+      token: z.string(),
+      email: z.string().email(),
+      password: z.string(),
+      name: z.string(),
+      surname: z.string(),
+      CompaniesCreateSchemaInput,
+    })).output(z.object({
+      userId: z.string(),
+      companyId: z.string(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
-  })
+  }),
+  companiesRouter: t.router({})
 });
 export type AppRouter = typeof appRouter;
 

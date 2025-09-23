@@ -1,6 +1,8 @@
 import { Input, Mutation, Query, Router } from 'nestjs-trpc';
 import { RegisterRequestsService } from './register-requests.service';
 import {
+  CompleteRegistrationDto,
+  CompleteRegistrationSchemaInput,
   CreateRegisterRequestDto,
   RegisterRequestSchemaInput,
   RegisterRequestSchemaOutput,
@@ -18,14 +20,14 @@ export class RegisterRequestsRouter {
     output: RegisterRequestSchemaOutput,
   })
   async createRegisterRequest(@Input() createRegisterRequestDto: CreateRegisterRequestDto) {
-    return this.registerRequestService.createRegisterRequest(createRegisterRequestDto);
+    return this.registerRequestService.create(createRegisterRequestDto);
   }
 
   @Query({
     output: z.array(RegisterRequestsSchema),
   })
   async findAllRegisterRequests() {
-    return this.registerRequestService.findAllRegisterRequests();
+    return this.registerRequestService.findAll();
   }
 
   @Mutation({
@@ -33,6 +35,17 @@ export class RegisterRequestsRouter {
     output: RegisterRequestsSchema,
   })
   async updateRegisterRequestStatus(@Input() updateRegisterRequestDto: UpdateRegisterRequestStatusDto) {
-    return this.registerRequestService.updateRegisterRequestStatus(updateRegisterRequestDto);
+    return this.registerRequestService.updateStatus(updateRegisterRequestDto);
+  }
+
+  @Mutation({
+    input: CompleteRegistrationSchemaInput,
+    output: z.object({
+      userId: z.string(),
+      companyId: z.string(),
+    }),
+  })
+  async completeRegistration(@Input() dto: CompleteRegistrationDto) {
+    return this.registerRequestService.completeRegistration(dto);
   }
 }

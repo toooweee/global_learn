@@ -1,7 +1,7 @@
-import { Controller } from '@nestjs/common';
+import { Router } from 'nestjs-trpc';
 import { CompaniesService } from './companies.service';
 
-@Controller('companies')
-export class CompaniesController {
+@Router()
+export class CompaniesRouter {
   constructor(private readonly companiesService: CompaniesService) {}
 }

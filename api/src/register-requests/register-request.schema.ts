@@ -1,9 +1,12 @@
 import z from 'zod';
+import { CompaniesCreateSchemaInput } from '../companies/companies.schema';
 
 export const RegisterRequestSchemaInput = z.object({
   email: z.string().email(),
   phone: z.string(),
 });
+
+export type CreateRegisterRequestDto = z.infer<typeof RegisterRequestSchemaInput>;
 
 export const RegisterRequestSchemaOutput = z.object({
   id: z.string(),
@@ -33,6 +36,23 @@ export const UpdateRegisterRequestStatusDto = z.object({
   status: RegisterRequestStatusSchema,
 });
 
-export type CreateRegisterRequestDto = z.infer<typeof RegisterRequestSchemaInput>;
-
 export type UpdateRegisterRequestStatusDto = z.infer<typeof UpdateRegisterRequestStatusDto>;
+
+export const CompleteRegistrationSchemaInput = z.object({
+  token: z.string(),
+  email: z.string().email(),
+  password: z.string(),
+  name: z.string(),
+  surname: z.string(),
+  company: CompaniesCreateSchemaInput,
+});
+
+export type CompleteRegistrationDto = z.infer<typeof CompleteRegistrationSchemaInput>;
+
+export const CompleteRegistrationSchemaOutput = z.object({
+  token: z.string(),
+  email: z.string().email(),
+  password: z.string(),
+  name: z.string(),
+  surname: z.string(),
+});

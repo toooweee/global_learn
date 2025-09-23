@@ -1,4 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '@prisma/prisma.service';
+import { CreateCompanyDto } from './companies.schema';
 
 @Injectable()
-export class CompaniesService {}
+export class CompaniesService {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async create(createCompanyDto: CreateCompanyDto) {
+    return this.prismaService.company.create({
+      data: {
+        ...createCompanyDto,
+        directions: createCompanyDto.directions.map((direction) => {
+          direction;
+        }),
+      },
+    });
+  }
+}
