@@ -99,8 +99,7 @@ const appRouter = t.router({
       userId: z.string(),
       companyId: z.string(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
-  }),
-  companiesRouter: t.router({})
+  })
 });
 export type AppRouter = typeof appRouter;
 

@@ -122,7 +122,7 @@ export class RegisterRequestsService {
       return { userId: newUser.id, companyId: newCompany.id };
     }
 
-    return new TRPCError({
+    throw new TRPCError({
       message: 'Your activation link is expired. Wait a new link',
       code: 'FORBIDDEN',
     });

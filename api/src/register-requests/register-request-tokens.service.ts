@@ -59,7 +59,7 @@ export class RegisterRequestTokenService {
       });
     }
 
-    return new Date() > tokenFromDb.expiresAt;
+    return new Date() < tokenFromDb.expiresAt;
   }
 
   async refreshToken(token: string) {
