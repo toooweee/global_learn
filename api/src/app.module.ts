@@ -10,6 +10,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { ConfigModule } from '@nestjs/config';
 import { EnvModule } from './env/env.module';
 import { EnvSchema } from './env/env';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { EnvSchema } from './env/env';
     RegisterRequestsModule,
     CompaniesModule,
     EnvModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

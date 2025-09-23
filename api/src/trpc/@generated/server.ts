@@ -49,6 +49,34 @@ const appRouter = t.router({
     logout: publicProcedure.output(z.object({
       success: z.boolean(),
     })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
+  }),
+  registerRequestsRouter: t.router({
+    createRegisterRequest: publicProcedure.input(z.object({
+      email: z.string().email(),
+      phone: z.string(),
+    })).output(z.object({
+      id: z.string(),
+      email: z.string().email(),
+      phone: z.string(),
+      status: z.string(),
+    })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+    findAllRegisterRequests: publicProcedure.output(z.array(z.object({
+      id: z.string(),
+      email: z.string(),
+      phone: z.string(),
+      status: z.string(),
+      createdAt: z.date(),
+    }))).query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+    updateRegisterRequestStatus: publicProcedure.input(z.object({
+      id: z.string(),
+      status: z.enum(['PENDING', 'APPROVED', 'REJECTED']),
+    })).output(z.object({
+      id: z.string(),
+      email: z.string(),
+      phone: z.string(),
+      status: z.string(),
+      createdAt: z.date(),
+    })).mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
   })
 });
 export type AppRouter = typeof appRouter;

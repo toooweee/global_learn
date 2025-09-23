@@ -10,51 +10,43 @@ datasource db {
 enum Role {
   USER
   ADMIN
+  CLIENT_ADMIN
 
   @@map("roles")
 }
 
-enum Permission {
-  CREATE_COURSE
-  READ_COURSE
-  REQUEST_COURSE_ACCESS
-  UPDATE_COURSE
-  DELETE_COURSE
-
-  CREATE_DEPARTMENT
-  DELETE_DEPARTMENT
-  UPDATE_DEPARTMENT
-  READ_DEPARTMENT
-
-  CREATE_POSITION
-  DELETE_POSITION
-  UPDATE_POSITION
-  READ_POSITION
-
-  CREATE_EMPLOYEE
-  DELETE_EMPLOYEE
-  UPDATE_EMPLOYEE
-  READ_EMPLOYEE
-
-  @@map("permissions")
-}
-
 model User {
-  id               String       @id @default(uuid())
-  email            String       @unique
-  password         String
-  role             Role         @default(USER)
-  token            Token[]
-  company          Company?     @relation(fields: [companyId], references: [id])
-  companyId        String?      @map("company_id")
-  position         Position?    @relation(fields: [positionId], references: [id])
-  positionId       String?      @map("position_id")
-  extraPermissions Permission[]
+  id         String       @id @default(uuid())
+  email      String       @unique
+  password   String
+  role       Role         @default(USER)
+  token      Token[]
+  profile    UserProfile?
+  company    Company?     @relation(fields: [companyId], references: [id])
+  companyId  String?      @map("company_id")
+  position   Position?    @relation(fields: [positionId], references: [id])
+  positionId String?      @map("position_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model UserProfile {
+  id             String   @id @default(uuid())
+  name           String
+  surname        String
+  bio            String?
+  employmentDate DateTime @map("employment_date")
+  avatars        File[]
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String   @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users_profiles")
 }
 
 model Token {
@@ -69,13 +61,14 @@ model Token {
 }
 
 model RegisterRequest {
-  id        String                @id @default(uuid())
-  email     String                @unique
-  phone     String
-  status    RegisterRequestStatus @default(PENDING)
-  company   Company?
-  createdAt DateTime              @default(now()) @map("created_at")
-  updatedAt DateTime              @updatedAt @map("updated_at")
+  id      String                @id @default(uuid())
+  email   String                @unique
+  phone   String
+  status  RegisterRequestStatus @default(PENDING)
+  company Company?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("register_requests")
 }
@@ -89,21 +82,32 @@ enum RegisterRequestStatus {
 }
 
 model Company {
-  id                String          @id @default(uuid())
+  id                String                @id @default(uuid())
   name              String
   description       String
+  directions        CompaniesDirections[]
+  logo              File?
+  address           String
+  foundationDate    DateTime              @map("foundation_date")
   departments       Department[]
   users             User[]
-  status            CompanyStatus   @default(TRIAL)
-  registerRequest   RegisterRequest @relation(fields: [registerRequestId], references: [id])
-  registerRequestId String          @unique @map("register_request_id")
-  direction         Direction       @relation(fields: [directionId], references: [id])
-  directionId       String          @map("direction_id")
+  status            CompanyStatus         @default(TRIAL)
+  registerRequest   RegisterRequest       @relation(fields: [registerRequestId], references: [id])
+  registerRequestId String                @unique @map("register_request_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("companies")
+}
+
+model CompanyLegalForm {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("company_legal_forms")
 }
 
 enum CompanyStatus {
@@ -113,10 +117,20 @@ enum CompanyStatus {
   @@map("company_status")
 }
 
+model CompaniesDirections {
+  id          String    @id @default(uuid())
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId   String    @map("company_id")
+  direction   Direction @relation(fields: [directionId], references: [id], onDelete: Cascade)
+  directionId String    @map("direction_id")
+
+  @@map("companies_directions")
+}
+
 model Direction {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  companies Company[]
+  id        String                @id @default(uuid())
+  name      String                @unique
+  companies CompaniesDirections[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -138,15 +152,32 @@ model Department {
 }
 
 model Position {
-  id           String       @id @default(uuid())
+  id           String     @id @default(uuid())
   name         String
-  department   Department   @relation(fields: [departmentId], references: [id])
-  departmentId String       @map("department_id")
-  permissions  Permission[]
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String     @map("department_id")
   user         User[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("positions")
+}
+
+model File {
+  id       String @id @default(uuid())
+  filename String
+  path     String
+  mimetype String
+  size     Int
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  UserProfile   UserProfile? @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  userProfileId String?      @map("user_profile_id")
+  company       Company?     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId     String?      @unique @map("company_id")
+
+  @@map("files")
 }
