@@ -1,23 +1,40 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../lib/auth.provider';
+import styles from './Header.module.scss';
+import logo from '../../assets/logo.svg';
+import { registerRequestsAdminRoute } from '../../lib/routes.ts';
 
 const Header = () => {
+  const { isAuthenticated, logout } = useAuth();
   return (
-    <header>
-      <Link to={'/'}>
-        <img src="" alt="logo" />
+    <header className={styles.header}>
+      <Link to={'/'} className={styles.brand}>
+        <img src={logo} alt="logo" />
       </Link>
 
-      <ul>
+      <ul className={styles.nav}>
         <li>
-          <Link to={'/users'}>Users</Link>
+          <Link className={styles.navLink} to={'/users'}>
+            Пользователи
+          </Link>
         </li>
         <li>
-          <a href="">Companies</a>
+          <Link className={styles.navLink} to={registerRequestsAdminRoute()}>
+            Заявки
+          </Link>
         </li>
       </ul>
 
-      <div>
-        <button>Выйти</button>
+      <div className={styles.actions}>
+        {isAuthenticated ? (
+          <button className={styles.button} onClick={() => logout()}>
+            Выйти
+          </button>
+        ) : (
+          <Link className={styles.navLink} to={'/login'}>
+            Войти
+          </Link>
+        )}
       </div>
     </header>
   );

@@ -17,6 +17,13 @@ const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: 'http://localhost:3000/trpc',
+      headers: async () => {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+        return token ? { authorization: `Bearer ${token}` } : {};
+      },
+      fetch: async (input, init) => {
+        return fetch(input, { ...init, credentials: 'include' as RequestCredentials });
+      },
     }),
   ],
 });

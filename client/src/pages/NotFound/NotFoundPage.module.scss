@@ -1,0 +1,16 @@
+.not-found {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.back-link {
+  display: inline-block;
+  color: blue;
+  transition: all 0.2s;
+}
+
+.back-link:hover {
+  opacity: 0.95;
+}

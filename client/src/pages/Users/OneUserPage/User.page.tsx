@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { trpc } from '../../../lib/trpc.provider.tsx';
+import styles from './User.module.scss';
 
 const UserPage = () => {
   const { id } = useParams() as { id: string };
@@ -15,12 +16,9 @@ const UserPage = () => {
   const { data, error, isError, isFetching, isLoading } = trpc.usersRouter.findUser.useQuery({ id });
 
   return (
-    <div>
-      <div>
-        <h1>{data?.email}</h1>
-
-        <p>his id is {data?.id}</p>
-      </div>
+    <div className={styles.container}>
+      <h1 className={styles.title}>{data?.email}</h1>
+      <p className={styles.meta}>ID: {data?.id}</p>
     </div>
   );
 };
