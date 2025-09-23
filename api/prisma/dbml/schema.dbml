@@ -1,0 +1,181 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table users {
+  id String [pk]
+  email String [unique, not null]
+  password String [not null]
+  role Role [not null, default: 'USER']
+  token tokens [not null]
+  profile users_profiles
+  company companies
+  companyId String
+  position positions
+  positionId String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table users_profiles {
+  id String [pk]
+  name String [not null]
+  surname String [not null]
+  bio String
+  employmentDate DateTime [not null]
+  avatars files [not null]
+  user users [not null]
+  userId String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table tokens {
+  token String [unique, not null]
+  expiresAt DateTime [not null]
+  user users [not null]
+  userId String [not null]
+  userAgent String [not null]
+
+  indexes {
+    (userId, userAgent) [unique]
+  }
+}
+
+Table register_requests {
+  id String [pk]
+  email String [unique, not null]
+  phone String [not null]
+  status RegisterRequestStatus [not null, default: 'PENDING']
+  company companies
+  token register_request_tokens
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table register_request_tokens {
+  token String [unique, not null]
+  expiresAt DateTime [not null]
+  RegisterRequest register_requests [not null]
+  registerRequestId String [unique, not null]
+}
+
+Table companies {
+  id String [pk]
+  name String [not null]
+  description String [not null]
+  directions companies_directions [not null]
+  logo files
+  address String [not null]
+  foundationDate DateTime [not null]
+  departments departments [not null]
+  users users [not null]
+  status CompanyStatus [not null, default: 'TRIAL']
+  registerRequest register_requests [not null]
+  registerRequestId String [unique, not null]
+  companyLegalForm company_legal_forms [not null]
+  companyLegalFormId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table company_legal_forms {
+  id String [pk]
+  name String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  companies companies [not null]
+}
+
+Table companies_directions {
+  id String [pk]
+  company companies [not null]
+  companyId String [not null]
+  direction directions [not null]
+  directionId String [not null]
+}
+
+Table directions {
+  id String [pk]
+  name String [unique, not null]
+  companies companies_directions [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table departments {
+  id String [pk]
+  name String [not null]
+  positions positions [not null]
+  company companies [not null]
+  companyId String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table positions {
+  id String [pk]
+  name String [not null]
+  department departments [not null]
+  departmentId String [not null]
+  users users [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table files {
+  id String [pk]
+  filename String [not null]
+  path String [not null]
+  mimetype String [not null]
+  size Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  UserProfile users_profiles
+  userProfileId String
+  company companies
+  companyId String [unique]
+}
+
+Enum Role {
+  USER
+  ADMIN
+  CLIENT_ADMIN
+}
+
+Enum RegisterRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+Enum CompanyStatus {
+  TRIAL
+  ACTIVE
+}
+
+Ref: users.companyId > companies.id
+
+Ref: users.positionId > positions.id
+
+Ref: users_profiles.userId - users.id
+
+Ref: tokens.userId > users.id [delete: Cascade]
+
+Ref: register_request_tokens.registerRequestId - register_requests.id
+
+Ref: companies.registerRequestId - register_requests.id
+
+Ref: companies.companyLegalFormId > company_legal_forms.id
+
+Ref: companies_directions.companyId > companies.id [delete: Cascade]
+
+Ref: companies_directions.directionId > directions.id [delete: Cascade]
+
+Ref: departments.companyId > companies.id
+
+Ref: positions.departmentId > departments.id
+
+Ref: files.userProfileId > users_profiles.id [delete: Cascade]
+
+Ref: files.companyId - companies.id [delete: Cascade]
