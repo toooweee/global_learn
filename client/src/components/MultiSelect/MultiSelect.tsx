@@ -99,3 +99,4 @@ const MultiSelect = ({ options, value, onChange, placeholder = 'Select…', disa
 };
 
 export default MultiSelect;
+

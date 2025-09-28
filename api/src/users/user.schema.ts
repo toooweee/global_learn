@@ -21,14 +21,13 @@ export const UserOutputSchema = z.object({
   email: z.string(),
 });
 
-export const UserMeSchema = z.object({
+export const UserProfileSchema = z.object({
   id: z.string().uuid(),
-  email: z.string().email(),
-  role: RoleSchema.optional(),
-  companyId: z.string().optional(),
+  name: z.string(),
+  surname: z.string(),
+  bio: z.string().optional(),
+  employmentDate: z.date(),
 });
-
-// for companies
 
 export const CreateUserWithProfileDtoSchema = z.object({
   email: z.string().email(),
@@ -39,21 +38,74 @@ export const CreateUserWithProfileDtoSchema = z.object({
   bio: z.string().optional(),
   employmentDate: z.coerce.date(),
   positionId: z.string().uuid().optional(),
-  avatar: z.string().optional(),
 });
 
 export type CreateUserWithProfileDto = z.infer<typeof CreateUserWithProfileDtoSchema>;
+
+export const ProfileSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  surname: z.string(),
+  bio: z.string().optional(),
+  employmentDate: z.date(),
+  avatar: z
+    .object({
+      id: z.string().uuid(),
+      path: z.string(),
+    })
+    .optional(),
+});
 
 export const UserWithProfileOutputSchema = z.object({
   id: z.string().uuid(),
   email: z.string(),
   role: RoleSchema,
-  companyId: z.string(),
-  profile: z.object({
-    id: z.string().uuid(),
-    name: z.string(),
-    surname: z.string(),
-    bio: z.string().optional(),
-    employmentDate: z.date(),
-  }),
+  companyId: z.string().uuid(),
+  profile: ProfileSchema,
+});
+
+export const UserMeSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  role: RoleSchema.optional(),
+  companyId: z.string().uuid().optional(),
+  profile: ProfileSchema.optional(),
+});
+
+export const FindCompanyUsersOptions = z.object({
+  positionId: z.string().uuid().optional(),
+});
+
+export type FindCompanyUsersOptionsDto = z.infer<typeof FindCompanyUsersOptions>;
+
+export const CompanyUserOutputSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  role: RoleSchema,
+  companyId: z.string().uuid().optional(),
+  positionId: z.string().uuid().optional(),
+  profile: UserProfileSchema.optional(),
+});
+
+export const CreateProfileDtoSchema = z.object({
+  name: z.string(),
+  surname: z.string(),
+  bio: z.string().optional(),
+  employmentDate: z.coerce.date(),
+});
+
+export type CreateProfileDto = z.infer<typeof CreateProfileDtoSchema>;
+
+export const UpdateProfileDtoSchema = z.object({
+  name: z.string().optional(),
+  surname: z.string().optional(),
+  bio: z.string().optional(),
+});
+
+export type UpdateProfileDto = z.infer<typeof UpdateProfileDtoSchema>;
+
+export const UploadAvatarOutputSchema = z.object({
+  id: z.string().uuid(),
+  path: z.string(),
+  filename: z.string(),
 });

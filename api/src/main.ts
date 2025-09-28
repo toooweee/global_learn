@@ -4,6 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import { EnvService } from './env/env.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'node:path';
+import * as fs from 'node:fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -16,7 +17,17 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.useStaticAssets(path.join(__dirname, '..', 'uploads'), {
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  const avatarsDir = path.join(uploadsDir, 'avatars');
+
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+  if (!fs.existsSync(avatarsDir)) {
+    fs.mkdirSync(avatarsDir, { recursive: true });
+  }
+
+  app.useStaticAssets(uploadsDir, {
     prefix: '/uploads/',
   });
 

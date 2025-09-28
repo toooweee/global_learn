@@ -4,11 +4,12 @@ import { AuthRouter } from './auth.router';
 import { UsersModule } from '../users/users.module';
 import { TokensModule } from '../tokens/tokens.module';
 import { AccessMiddleware } from './middleware';
+import { AccessGuard } from './guards/access.guard';
 
 @Global()
 @Module({
   imports: [UsersModule, TokensModule],
-  providers: [AuthService, AuthRouter, AccessMiddleware],
-  exports: [AccessMiddleware],
+  providers: [AuthService, AuthRouter, AccessMiddleware, AccessGuard],
+  exports: [AccessMiddleware, AccessGuard],
 })
 export class AuthModule {}

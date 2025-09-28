@@ -141,7 +141,7 @@ export class LegalFormsService {
       });
     }
 
-    return this.prismaService.companyLegalForm.delete({
+    await this.prismaService.companyLegalForm.delete({
       where: { id },
     });
   }

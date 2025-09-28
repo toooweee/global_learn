@@ -100,7 +100,6 @@ model Company {
   name               String
   description        String
   directions         CompaniesDirections[]
-  logo               File?
   address            String
   foundationDate     DateTime              @map("foundation_date")
   departments        Department[]
@@ -193,8 +192,6 @@ model File {
 
   UserProfile   UserProfile? @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
   userProfileId String?      @map("user_profile_id")
-  company       Company?     @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyId     String?      @unique @map("company_id")
 
   @@map("files")
 }

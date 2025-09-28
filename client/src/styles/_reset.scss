@@ -1,4 +1,3 @@
-/* Modern CSS reset + sensible defaults */
 *,
 *::before,
 *::after {
@@ -41,7 +40,6 @@ a {
   text-decoration: none;
 }
 
-/* Smooth fonts rendering */
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

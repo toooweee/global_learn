@@ -1,8 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
-import UsersPage from './pages/Users/AllUsersPage/Users.page.tsx';
 import {
-  allUsersRoute,
-  oneUserRoute,
   loginRoute,
   meRoute,
   registerRequestCreateRoute,
@@ -11,7 +8,6 @@ import {
   directionsRoute,
   legalFormsRoute,
   departmentsRoute,
-  positionsRoute,
   companiesRoute,
 } from './lib/routes.ts';
 import Layout from './components/Layout/Layout.tsx';
@@ -23,11 +19,9 @@ import CompleteRegistrationPage from './pages/RegisterRequests/CompleteRegistrat
 import DirectionsPage from './pages/Directions/Directions.page.tsx';
 import LegalFormsPage from './pages/LegalForms/LegalForms.page.tsx';
 import DepartmentsPage from './pages/Departments/Departments.page.tsx';
-import PositionsPage from './pages/Positions/Positions.page.tsx';
 import CompaniesPage from './pages/Companies/Companies.page.tsx';
 import RequireAuth from './lib/RequireAuth.tsx';
 import RequireRole from './lib/RequireRole.tsx';
-import HomeRedirect from './pages/HomeRedirect.tsx';
 import HomePage from './pages/Home/Home.page.tsx';
 import MePage from './pages/Me/Me.page.tsx';
 
@@ -43,14 +37,6 @@ const App = () => {
               <RequireAuth>
                 <MePage />
               </RequireAuth>
-            }
-          />
-          <Route
-            path={allUsersRoute()}
-            element={
-              <RequireRole allow={['ADMIN']}>
-                <UsersPage />
-              </RequireRole>
             }
           />
           <Route
@@ -82,14 +68,6 @@ const App = () => {
             element={
               <RequireRole allow={['CLIENT_ADMIN']}>
                 <DepartmentsPage />
-              </RequireRole>
-            }
-          />
-          <Route
-            path={positionsRoute()}
-            element={
-              <RequireRole allow={['CLIENT_ADMIN']}>
-                <PositionsPage />
               </RequireRole>
             }
           />

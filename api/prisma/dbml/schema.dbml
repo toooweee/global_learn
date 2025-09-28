@@ -65,7 +65,6 @@ Table companies {
   name String [not null]
   description String [not null]
   directions companies_directions [not null]
-  logo files
   address String [not null]
   foundationDate DateTime [not null]
   departments departments [not null]
@@ -133,8 +132,6 @@ Table files {
   updatedAt DateTime [not null]
   UserProfile users_profiles
   userProfileId String
-  company companies
-  companyId String [unique]
 }
 
 Enum Role {
@@ -177,5 +174,3 @@ Ref: departments.companyId > companies.id
 Ref: positions.departmentId > departments.id
 
 Ref: files.userProfileId > users_profiles.id [delete: Cascade]
-
-Ref: files.companyId - companies.id [delete: Cascade]

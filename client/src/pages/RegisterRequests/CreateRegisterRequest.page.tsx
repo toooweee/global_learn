@@ -1,8 +1,10 @@
 import { type FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { trpc } from '../../lib/trpc.provider';
 import styles from './CreateRegisterRequest.module.scss';
 
 const CreateRegisterRequestPage = () => {
+  const navigate = useNavigate();
   const createMutation = trpc.registerRequestsRouter.createRegisterRequest.useMutation();
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -18,6 +20,9 @@ const CreateRegisterRequestPage = () => {
       setSuccess(true);
       setEmail('');
       setPhone('');
+      setTimeout(() => {
+        navigate('/login?registerSuccess=true');
+      }, 3000);
     } catch (err: any) {
       setError(err?.message ?? 'Failed');
     }
@@ -50,8 +55,8 @@ const CreateRegisterRequestPage = () => {
         {error && <p className={styles.error}>{error}</p>}
         {success && (
           <>
-            <p className={styles.success}>Заявка отправлена</p>
-            <p className={styles.notice}>Проверьте почту: мы отправили ссылку для завершения регистрации.</p>
+            <p className={styles.success}>Заявка отправлена успешно!</p>
+            <p className={styles.notice}>Все ок, ждите ответа на почту. Вы будете перенаправлены на страницу входа.</p>
           </>
         )}
         <button className={styles.button} type="submit" disabled={createMutation.isPending}>

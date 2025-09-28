@@ -1,29 +1,296 @@
 @use '../../styles/_tokens' as *;
+@use '../../styles/_mixins' as *;
 
 .container {
-  max-width: 720px;
-  margin: $space-6 auto;
+  max-width: 900px;
+  margin: $space-8 auto;
   padding: $space-5;
+  background: linear-gradient(135deg, var(--surface), var(--surface-alt));
+  min-height: 100vh;
 }
 
 .title {
-  margin: 0 0 $space-4;
-  font-size: 22px;
-  font-weight: 700;
+  margin: 0 0 $space-6 0;
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  letter-spacing: -0.5px;
 }
 
-.card {
-  border: 1px solid var(--border);
-  border-radius: $radius-md;
-  padding: $space-4;
+.profileCard {
+  display: flex;
+  gap: $space-6;
   background: var(--surface);
+  border-radius: 16px;
+  padding: $space-6;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $space-4;
+    padding: $space-4;
+  }
+}
+
+.avatarSection {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatarContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid transparent;
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) border-box;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.avatarPlaceholder {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--surface-alt), var(--border));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 48px;
+  border: 4px solid var(--border);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+  }
+}
+
+.placeholderIcon {
+  font-size: 48px;
+}
+
+.uploadLabel {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  padding: $space-2 $space-3;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+
+  &:hover {
+    transform: translateX(-50%) scale(1.05);
+  }
+}
+
+.uploadIcon {
+  font-size: 14px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.profileInfo,
+.editForm,
+.noProfilePrompt {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.noProfilePrompt {
+  align-items: center;
+  justify-content: center;
+  gap: $space-4;
+  text-align: center;
+  color: var(--text);
+
+  p {
+    font-size: 18px;
+    margin: 0 0 $space-2 0;
+  }
+}
+
+.field {
+  margin-bottom: $space-5;
+  display: flex;
+  flex-direction: column;
 }
 
 .label {
-  color: var(--muted);
-  margin-right: $space-2;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: $space-2;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 18px;
+  color: var(--text);
+  margin-top: $space-1;
+  font-weight: 500;
+}
+
+.roleBadge {
+  display: inline-block;
+  padding: $space-1 $space-2;
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.bio {
+  font-style: italic;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: $space-2;
+  background: rgba(0, 0, 0, 0.05);
+  border-left: 3px solid var(--primary);
+  margin-top: $space-2;
+  border-radius: 0 8px 8px 0;
+}
+
+.input,
+.textarea {
+  padding: $space-3 $space-4;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--surface);
+  color: #0b1220;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: linear-gradient(135deg, var(--surface), var(--surface-alt));
+    box-shadow:
+      0 0 0 3px rgba(0, 0, 0, 0.1),
+      inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  &::placeholder {
+    color: var(--text-secondary);
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.actions {
+  display: flex;
+  gap: $space-3;
+  margin-top: $space-5;
+  justify-content: flex-end;
+}
+
+.buttonPrimary {
+  @include button-primary();
+  padding: $space-3 $space-5;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.buttonSecondary {
+  @include button-reset();
+  padding: $space-3 $space-5;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--primary);
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: $space-6;
+  font-size: 18px;
+  animation: fadeIn 0.5s ease;
 }
 
 .error {
-  color: #dc2626;
+  color: var(--error);
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid var(--error);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -48,7 +48,7 @@ export class LegalFormsRouter {
 
   @Mutation({
     input: z.object({ id: z.string().uuid() }),
-    output: LegalFormsSchema,
+    output: z.void(),
   })
   async delete(@Input() input: { id: string }) {
     return this.legalFormsService.delete(input.id);

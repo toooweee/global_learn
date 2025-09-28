@@ -1,9 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
-import { CreateUserDto, CreateUserWithProfileDto } from './user.schema';
+import {
+  CreateProfileDto,
+  CreateUserDto,
+  CreateUserWithProfileDto,
+  FindCompanyUsersOptionsDto,
+  UpdateProfileDto,
+} from './user.schema';
 import { TRPCError } from '@trpc/server';
 import * as argon from 'argon2';
 import { Prisma } from '@prisma/client';
+import { Role } from './user.schema';
+import * as fs from 'fs/promises';
+import * as path from 'node:path';
 
 @Injectable()
 export class UsersService {
@@ -32,15 +41,6 @@ export class UsersService {
         ...createUserDto,
         password: hashedPassword,
       },
-      select: {
-        id: true,
-        email: true,
-      },
-    });
-  }
-
-  async findAllUsers() {
-    return this.prismaService.user.findMany({
       select: {
         id: true,
         email: true,
@@ -149,6 +149,16 @@ export class UsersService {
             id: true,
           },
         },
+        profile: {
+          include: {
+            avatars: {
+              orderBy: {
+                createdAt: 'desc',
+              },
+              take: 1,
+            },
+          },
+        },
       },
     });
 
@@ -157,6 +167,21 @@ export class UsersService {
       role: user!.role,
       email: user!.email,
       companyId: user?.companyId || undefined,
+      profile: user!.profile
+        ? {
+            id: user!.profile?.id,
+            name: user!.profile?.name,
+            surname: user!.profile?.surname,
+            bio: user!.profile?.bio,
+            employmentDate: user!.profile?.employmentDate,
+            avatar: user!.profile.avatars[0]
+              ? {
+                  id: user!.profile.avatars[0].id,
+                  path: user!.profile.avatars[0].path,
+                }
+              : undefined,
+          }
+        : undefined,
     };
   }
 
@@ -174,6 +199,31 @@ export class UsersService {
   }
 
   // for companies
+  async findAllUsers(companyId: string, findUsersInput: FindCompanyUsersOptionsDto) {
+    return this.prismaService.user.findMany({
+      where: {
+        companyId,
+        ...(findUsersInput.positionId && { positionId: findUsersInput.positionId }),
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        companyId: true,
+        positionId: true,
+        profile: {
+          select: {
+            id: true,
+            name: true,
+            surname: true,
+            bio: true,
+            employmentDate: true,
+          },
+        },
+      },
+    });
+  }
+
   async createUserWithProfile(companyId: string, createUserWithProfileDto: CreateUserWithProfileDto) {
     const { email, password, role, name, surname, bio, employmentDate, positionId } = createUserWithProfileDto;
 
@@ -219,6 +269,7 @@ export class UsersService {
         data: {
           email,
           password: hashedPassword,
+          role: role ?? Role.USER,
           companyId,
           positionId,
         },
@@ -234,7 +285,7 @@ export class UsersService {
         data: {
           name,
           surname,
-          bio,
+          bio: bio ?? null,
           employmentDate: new Date(employmentDate),
           userId: newUser.id,
         },
@@ -252,5 +303,84 @@ export class UsersService {
         profile: newProfile,
       };
     });
+  }
+
+  async createProfile(userId: string, dto: CreateProfileDto) {
+    return this.prismaService.userProfile.create({
+      data: {
+        ...dto,
+        userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        bio: true,
+        employmentDate: true,
+      },
+    });
+  }
+
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    const profile = await this.prismaService.userProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!profile) {
+      throw new TRPCError({
+        message: 'Profile not found',
+        code: 'NOT_FOUND',
+      });
+    }
+
+    return this.prismaService.userProfile.update({
+      where: { id: profile.id },
+      data: {
+        ...dto,
+      },
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        bio: true,
+        employmentDate: true,
+      },
+    });
+  }
+
+  async uploadAvatar(userId: string, file: Express.Multer.File) {
+    const profile = await this.prismaService.userProfile.findUnique({
+      where: { userId },
+    });
+
+    if (!profile) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Profile not found' });
+    }
+
+    const uploadDir = path.join(process.cwd(), 'uploads/avatars');
+    try {
+      await fs.access(uploadDir);
+    } catch {
+      await fs.mkdir(uploadDir, { recursive: true });
+    }
+
+    const storagePath = `/uploads/avatars/${file.filename}`;
+
+    const newFile = await this.prismaService.file.create({
+      data: {
+        filename: file.filename,
+        path: storagePath,
+        mimetype: file.mimetype,
+        size: file.size,
+        userProfileId: profile.id,
+      },
+      select: {
+        id: true,
+        filename: true,
+        path: true,
+      },
+    });
+
+    return newFile;
   }
 }

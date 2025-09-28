@@ -1,11 +1,12 @@
 import { type FormEvent, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { trpc } from '../../lib/trpc.provider';
 import styles from './CompleteRegistration.module.scss';
 import { loginRoute } from '../../lib/routes';
 import MultiSelect from '../../components/MultiSelect/MultiSelect';
 
 const CompleteRegistrationPage = () => {
+  const navigate = useNavigate();
   const completeMutation = trpc.registerRequestsRouter.completeRegistration.useMutation();
   const [params] = useSearchParams();
   const token = useMemo(() => params.get('token') ?? '', [params]);
@@ -44,10 +45,10 @@ const CompleteRegistrationPage = () => {
           companyLegalFormId,
         },
       } as any);
-      setSuccess(`Done: userId=${(res as any).userId}, companyId=${(res as any).companyId}`);
-      if (typeof window !== 'undefined') {
-        window.location.assign(loginRoute());
-      }
+      setSuccess('Регистрация завершена успешно! Вы будете перенаправлены на страницу входа.');
+      setTimeout(() => {
+        navigate(loginRoute());
+      }, 3000);
     } catch (err: any) {
       setError(err?.message ?? 'Failed');
     }

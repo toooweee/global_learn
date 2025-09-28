@@ -59,7 +59,7 @@ export class AccessMiddleware implements TRPCMiddleware {
         ...ctx,
         user: {
           ...payload,
-          companyId: user.companyId || undefined, // Добавляем companyId
+          companyId: user.companyId || undefined,
         },
       },
     });

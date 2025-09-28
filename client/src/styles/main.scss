@@ -26,7 +26,6 @@ body {
   margin-top: $space-6;
 }
 
-/* Generic UI primitives */
 .btn {
   @include button-reset();
   display: inline-flex;

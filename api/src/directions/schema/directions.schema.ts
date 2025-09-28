@@ -6,7 +6,9 @@ export const DirectionsSchemaInput = z.object({
 
 export type CreateDirectionDto = z.infer<typeof DirectionsSchemaInput>;
 
-export type UpdateDirectionDto = Partial<CreateDirectionDto>;
+export const UpdateDirectionSchemaInput = DirectionsSchemaInput.partial();
+
+export type UpdateDirectionDto = Partial<typeof UpdateDirectionSchemaInput>;
 
 export const DirectionsSchema = z.object({
   id: z.string(),

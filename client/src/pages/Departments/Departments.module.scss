@@ -2,78 +2,77 @@
 @use '../../styles/_mixins' as *;
 
 .container {
-  padding: $space-4;
-  max-width: 800px;
+  @include container(1200px, 16px);
+  padding-top: $space-6;
+  padding-bottom: $space-6;
 }
 
-.form {
+.header {
   display: flex;
-  gap: $space-3;
-  margin-bottom: $space-4;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: $space-6;
 }
 
-.list {
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.list,
+.posList {
   display: grid;
-  gap: $space-3;
+  gap: $space-4;
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.item {
-  border: 1px solid var(--border);
-  padding: $space-3;
-  border-radius: $radius-md;
-  background: var(--surface);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
+.item,
+.posRow {
+  @include card-base();
+  overflow: hidden;
 }
 
+.accordionHeader,
 .row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: $space-3;
-}
-
-.accordionHeader {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
+  padding: $space-4;
   cursor: pointer;
-  padding: $space-2;
-  border-radius: $radius-sm;
-  transition: background 0.2s ease;
+  transition: background-color 0.2s ease;
 
   &:hover {
-    background: rgba(var(--primary-rgb), 0.05);
+    background: var(--primary-50);
   }
 }
 
-.positions {
-  margin-top: $space-3;
-  border-top: 1px dashed var(--border);
-  padding-top: $space-3;
-  display: grid;
-  gap: $space-2;
-}
-
-.posRow {
+.depTitle,
+.posTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: $space-2;
-  border-radius: $radius-sm;
-  background: rgba(0, 0, 0, 0.02);
+  flex: 1;
+}
 
-  &:hover {
-    background: rgba(0, 0, 0, 0.05);
-  }
+.chevron {
+  margin-left: $space-2;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.positions,
+.usersContainer {
+  padding: $space-4;
+  border-top: 1px solid var(--border);
+  background: rgba(var(--text), 0.02);
 }
 
 .buttons {
@@ -81,75 +80,58 @@
   gap: $space-2;
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
 .field {
-  margin-bottom: $space-2;
-
-  input {
-    color: #0b1220;
-    width: 100%;
-    padding: $space-2 $space-3;
-    border: 1px solid var(--border);
-    border-radius: $radius-sm;
-    background: var(--surface);
-    font-size: 14px;
-    transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-
-    &:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
-    }
-
-    &::placeholder {
-      color: var(--text-secondary);
-    }
-  }
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
 }
 
-.buttonPrimary {
+.input,
+.textarea {
+  @include input-base();
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.actions {
+  display: flex;
+  gap: $space-2;
+  justify-content: flex-end;
+  margin-top: $space-3;
+}
+
+.btnPrimary {
   @include button-primary();
-  padding: $space-2 $space-3;
-  border-radius: $radius-sm;
-  font-weight: 500;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(var(--primary-rgb), 0.2);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+  min-width: 100px;
 }
 
-.buttonGhost {
+.btnSecondary {
   @include button-reset();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: $space-2 $space-3;
-  border: 1px solid var(--border);
   border-radius: $radius-sm;
-  background: var(--surface);
+  background: var(--muted);
   color: var(--text);
-  font-size: 14px;
-  font-weight: 400;
-  transition: all 0.2s ease;
+  border: 1px solid var(--border);
   cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
 
-  &:hover {
-    background: var(--hover-bg);
-    border-color: var(--primary);
+  &:hover:not(:disabled) {
+    background: var(--primary-50);
     color: var(--primary);
-  }
-
-  &:active {
-    background: var(--active-bg);
+    border-color: var(--primary);
   }
 
   &:disabled {
@@ -158,8 +140,129 @@
   }
 }
 
-.row {
-  display: flex;
+.btnDanger {
+  @include button-reset();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+
+  &:hover:not(:disabled) {
+    background: #fecaca;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.userList {
+  list-style: none;
+  padding: 0;
+  margin: $space-3 0;
+  display: grid;
   gap: $space-2;
-  justify-content: flex-end;
+}
+
+.userItem {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding: $space-3;
+  background: var(--surface);
+  border-radius: $radius-sm;
+  border: 1px solid var(--border);
+}
+
+.userName {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.userEmail {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.noUsers,
+.loading,
+.error,
+.empty {
+  text-align: center;
+  padding: $space-4;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.error {
+  color: #dc2626;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: $radius-md;
+}
+
+.empty {
+  margin-top: $space-4;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+.modalContent {
+  @include card-base();
+  padding: $space-5;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalSlideIn 0.3s ease;
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: $space-4;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+body.modal-open {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0);
 }

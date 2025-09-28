@@ -4,6 +4,7 @@ import {
   DirectionsSchema,
   DirectionsSchemaInput,
   UpdateDirectionDto,
+  UpdateDirectionSchemaInput,
 } from './schema/directions.schema';
 import { DirectionsService } from './directions.service';
 import { z } from 'zod';
@@ -36,7 +37,7 @@ export class DirectionsRouter {
   }
 
   @Mutation({
-    input: z.object({ id: z.string() }),
+    input: z.object({ id: z.string() }).merge(UpdateDirectionSchemaInput),
     output: DirectionsSchema,
   })
   async update(@Input('id') id: string, @Input() updateDirectionDto: UpdateDirectionDto) {

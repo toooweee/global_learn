@@ -1,4 +1,3 @@
-export const allUsersRoute = () => '/users';
 export const oneUserRoute = ({ id }: { id: string }) => `/users/${id}`;
 export const loginRoute = () => '/login';
 export const homeRoute = () => '/';

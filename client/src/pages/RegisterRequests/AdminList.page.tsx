@@ -30,6 +30,7 @@ const AdminRegisterRequestsPage = () => {
       <h1 className={styles.title}>Заявки на регистрацию</h1>
       <div className={styles.toolbar}>
         <input
+          type={'text'}
           className={styles.input}
           placeholder={'Поиск по email/телефону'}
           value={query}

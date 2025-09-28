@@ -4,10 +4,19 @@ import {
   CreateUserDto,
   CreateUserWithProfileDto,
   CreateUserWithProfileDtoSchema,
+  FindCompanyUsersOptions,
+  FindCompanyUsersOptionsDto,
   UserInputSchema,
   UserMeSchema,
   UserOutputSchema,
   UserWithProfileOutputSchema,
+  CompanyUserOutputSchema,
+  UpdateProfileDtoSchema,
+  UploadAvatarOutputSchema,
+  UserProfileSchema,
+  UpdateProfileDto,
+  CreateProfileDto,
+  CreateProfileDtoSchema,
 } from './user.schema';
 import { z } from 'zod';
 import { AccessMiddleware } from '../auth/middleware';
@@ -26,16 +35,9 @@ export class UsersRouter {
     return this.usersService.createUser(createUserDto);
   }
 
+  @UseMiddlewares(AccessMiddleware)
   @Query({
-    output: z.array(UserOutputSchema),
-  })
-  async findAllUsers() {
-    return this.usersService.findAllUsers();
-  }
-
-  // @UseMiddlewares(AccessMiddleware)
-  @Query({
-    input: z.object({ id: z.string() }),
+    input: z.object({ id: z.string().uuid() }),
     output: UserOutputSchema,
   })
   async findUser(@Input('id') id: string) {
@@ -45,18 +47,18 @@ export class UsersRouter {
   @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: z.object({
-      id: z.string(),
+      id: z.string().uuid(),
       data: UserInputSchema.partial(),
     }),
     output: UserOutputSchema,
   })
-  async updateUser(@Input('id') id: string, @Input() updateUserDto: Partial<CreateUserDto>) {
+  async updateUser(@Input('id') id: string, @Input('data') updateUserDto: Partial<CreateUserDto>) {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
   @UseMiddlewares(AccessMiddleware)
   @Mutation({
-    input: z.object({ id: z.string() }),
+    input: z.object({ id: z.string().uuid() }),
     output: UserOutputSchema,
   })
   async deleteUser(@Input('id') id: string) {
@@ -72,6 +74,7 @@ export class UsersRouter {
   }
 
   // for companies
+
   @UseMiddlewares(AccessMiddleware)
   @Mutation({
     input: CreateUserWithProfileDtoSchema,
@@ -82,5 +85,32 @@ export class UsersRouter {
       throw new TRPCError({ code: 'UNAUTHORIZED', message: 'No company access' });
     }
     return this.usersService.createUserWithProfile(ctx.user.companyId, dto);
+  }
+
+  @UseMiddlewares(AccessMiddleware)
+  @Query({
+    input: FindCompanyUsersOptions,
+    output: z.array(CompanyUserOutputSchema),
+  })
+  async findAllUsers(@Ctx() ctx: AppContextType, @Input() findUsersInput: FindCompanyUsersOptionsDto) {
+    return this.usersService.findAllUsers(ctx.user!.companyId!, findUsersInput);
+  }
+
+  @UseMiddlewares(AccessMiddleware)
+  @Mutation({
+    input: CreateProfileDtoSchema,
+    output: UserProfileSchema,
+  })
+  async createProfile(@Input() dto: CreateProfileDto, @Ctx() ctx: AppContextType) {
+    return this.usersService.createProfile(ctx.user!.sub, dto);
+  }
+
+  @UseMiddlewares(AccessMiddleware)
+  @Mutation({
+    input: UpdateProfileDtoSchema,
+    output: UserProfileSchema,
+  })
+  async updateProfile(@Input() dto: UpdateProfileDto, @Ctx() ctx: AppContextType) {
+    return this.usersService.updateProfile(ctx.user!.sub, dto);
   }
 }
